@@ -94,6 +94,23 @@ class M_admin extends CI_Model {
 		$this->db->where('rumah.kd_rumah', $id);
 	}
 
+	public function detail_pemesanan($id)
+	{
+		$this->db->select("pemesanan.*, rumah.nama_kavling, konsumen.nama, konsumen.no_ktp, konsumen.alamat");
+		$this->db->from("pemesanan");
+		$this->db->join("rumah", "rumah.kd_rumah = pemesanan.kd_rumah");
+		$this->db->join("user", "user.id_user = pemesanan.id_user");
+		$this->db->join("konsumen", "konsumen.id_user = user.id_user");
+		$this->db->where("pemesanan.id_pemesanan", $id);
+		return $this->db->get();
+	}
+
+	public function notif_pesan()
+	{
+		$this->db->where('read', 'n');
+		return $this->db->get('pesan')->num_rows();
+	}
+
 	public function auto_number($table, $kolom, $lebar=0, $awalan=null)
 	{
 		$this->db->select($kolom);

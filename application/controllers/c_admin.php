@@ -1261,11 +1261,15 @@ class C_admin extends CI_Controller {
 
 	// End Pemesanan
 
+	/**
+	 * Page Pembayaran
+	 */
+
 	public function pembayaran()
 	{
 		$data = array(
 						"title" => "Data Pembayaran",
-						"data" => $this->m_admin->get_all('pembayaran', null, null)
+						"pembayaran" => $this->m_admin->get_all('pembayaran', null, null)->result()
 					);
 		
 		
@@ -1277,15 +1281,46 @@ class C_admin extends CI_Controller {
 		$id  = $this->input->post('id');
 		
 		$this->m_admin->update_data('pembayaran', array('status' => 'y'), 'id_pembayaran', $id);
-		$this->session->set_flashdata('konfirmasi_sukses', '<div class="alert alert-info"><i class="fa fa-info"></i> Konfirmasi pembayaran Sukses !!</div>');
+	}
+
+	public function detail_pemesanan()
+	{
+		$id = $this->uri->segment(3);
+		$data  = array(
+						 "title" => "Detail Pemesanan ".$id,
+					  	 "data"  => $this->m_admin->detail_pemesanan($id)->row()
+					  );
+		$this->load->view('backend/pembayaran/detail_pemesanan', $data);
 	}
 
 	public function lihat_spr()
 	{
 
 	}
-
 	// End
+
+	/**
+	 * Pesan Page
+	 */
+
+	public function pesan()
+	{
+		$data_pesan = $this->m_admin->get_id('pesan', "parent", "0")->result();
+
+		foreach($data_pesan as $p)
+		{
+			$this->m_admin->update_data('pesan', array("read" => "y"), "parent", "0");
+		}
+
+		$data = array(
+						"title" => "Pesan",
+						"pesan" => $data_pesan
+					);
+
+		$this->admin_template->display('backend/pesan/index', $data);
+	}
+
+
 
 	/**
 	 * Feature option

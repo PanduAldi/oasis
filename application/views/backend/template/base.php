@@ -15,7 +15,8 @@
 	<link rel="stylesheet" href="<?php echo base_url() ?>assets/jquery_tag/jquery.tagsinput.min.css">
 	<!-- datatables -->
 	<link rel="stylesheet" href="<?php echo base_url()  ?>assets/datatables/dataTables.bootstrap.css">
-
+	<!-- Sweet Alert -->
+	<link rel="stylesheet" href="<?php echo base_url() ?>assets/swal/sweetalert.css">
 
 	<style>
 		html {
@@ -171,6 +172,7 @@
 	<script src="<?php echo base_url() ?>assets/datatables/jquery.dataTables.min.js"></script>
 	<script src="<?php echo base_url() ?>assets/datatables/dataTables.bootstrap.min.js"></script>
     <!-- global jquery -->
+    <script src="<?php echo base_url() ?>assets/swal/sweetalert.min.js"></script>
     <script>
     	
     	$(function(){
