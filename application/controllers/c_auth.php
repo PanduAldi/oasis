@@ -17,7 +17,8 @@ class C_auth extends CI_Controller {
 	public function index()
 	{
 		$data['title'] = "Panel Login";
-		
+	
+
 		$this->load->view('backend/auth/panel_login', $data);
 	}
 
@@ -41,9 +42,11 @@ class C_auth extends CI_Controller {
 
 			// session input
 			$sess_data = array(
+								 'id_user' => $res->id_user,
 							     'username' => $username,
 							     'islogin'  => true,
-							     'level'    => $res->level
+							     'level'    => $res->level,
+							     'keterangan' => $res->keterangan
 							   );
 			$this->session->set_userdata($sess_data);
 
@@ -60,7 +63,7 @@ class C_auth extends CI_Controller {
 		{
 			$level = 'administrator';	
 		}
-		else if ( $this->session->userdata('level') == '1')
+		else if ( $this->session->userdata('level') == '2')
 		{
 			$level = 'marketing';
 		}

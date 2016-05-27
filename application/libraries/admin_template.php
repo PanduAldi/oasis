@@ -13,10 +13,21 @@ class Admin_template
 	public function display($template, $data=null)
 	{
 		$data['content'] = $this->ci->load->view($template, $data, true);
-		$data['sidebar'] = $this->ci->load->view('backend/template/sidebar', $data, true);
+		$data['nav'] = $this->ci->load->view('backend/template/nav', $data, true);
 		$this->ci->load->view('backend/template/base', $data);
 	}
 
+	public function notif_display($template, $data=null)
+	{
+		$data['content'] = $this->ci->load->view($template, $data, true);
+		$this->ci->load->view('backend/template/notif_template', $data);
+	}
+	
+	public function upload_display($template, $data=null)
+	{
+		$data['content'] = $this->ci->load->view($template, $data, true);
+		$this->ci->load->view('backend/template/upload_template', $data);
+	}
 }
 
 /* End of file admin_template.php */

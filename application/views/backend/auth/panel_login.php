@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<!-- bs 3 -->
-	<link rel="stylesheet" href="<?php echo base_url() ?>assets/other-css/yeti.css">
+	<link rel="stylesheet" href="<?php echo base_url() ?>assets/other-css/united.css">
 	<!-- font awesome -->
 	<link rel="stylesheet" href="<?php echo base_url() ?>assets/font-awesome/css/font-awesome.min.css">
 	<!-- data animate -->
@@ -59,14 +59,14 @@
 <body>
 	<div class="container">
 		<div class="col-lg-6 col-xs-12" style="margin-top: 3%;margin-left:25%">
-			<h2 align="center">.:: Administrator ::.</h2>
+			<p align="center"><img src="<?php echo base_url('img/logo.png') ?>" class="img-responsive" width="200" height="200" alt=""></p>
 			<div class="pesan-error"></div>
 			<?php echo $this->session->flashdata('login_gagal');
 				  echo $this->session->flashdata('logout_success');
 				 ?>
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					Login Panel
+					<i class="fa fa-leaf"></i> PANEL LOGIN
 				</div>
 				<div class="panel-body">
 					<form id="form_login" action="<?php echo site_url('panel_login/proses') ?>" method="POST">
@@ -87,7 +87,7 @@
 						</div>
 					</form>
 				</div>
-			</div>			
+			</div>		
 			<div class="footer" align="center">
 				<small>Sistem Informasi pemasaran perumahan D'OASIS Residence</small>
 			</div>
