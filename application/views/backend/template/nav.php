@@ -25,7 +25,10 @@
 	<li class="dropdown">
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i>  Kotak Masuk <b class="caret"></b></a>
 		<ul class="dropdown-menu">
-			<li><a href="<?php echo site_url('pesan') ?>">Pesan</a></li>
+			<?php  
+				$notif_pesan = $this->m_admin->notif_pesan();
+			?>
+			<li><a href="<?php echo site_url('pesan') ?>">Pesan <span class="label label-warning"><?php echo $notif_pesan ?></span></a></li>
 			<li><a href="<?php echo site_url('keluhan') ?>">Keluhan</a></li>
 		</ul>
 	</li>

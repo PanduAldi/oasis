@@ -126,8 +126,9 @@ $route['404_override'] = '';
 	$route['konsumen/hapus']  			 	= "c_admin/hapus_konsumen";
 	$route['pembayaran'] 					= "c_admin/pembayaran";
 	$route['pembayaran/konfirmasi']			= "c_admin/konfirmasi_pembayaran";
+	$route['pembayaran/detail_pemesanan/(:any)'] = "c_admin/detail_pemesanan";
+	$route['pesan']							= "c_admin/pesan";
 
- 
 
 /** End of Backend routes */
 

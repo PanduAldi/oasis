@@ -23,29 +23,38 @@
 		<div class="row">
 				<table class="table table-striped">
 					<tr>
+						<td colspan="6"><strong>Data Pemesan</strong></td>
+					</tr>
+					<tr>
 						<td width="120">Nomor KTP</td>
 						<td width="10">:</td>
-						<td colspan="4"><?php echo $konsumen->no_ktp ?></td>
+						<td colspan="4"><?php echo $data->no_ktp ?></td>
 					</tr>
 					<tr>
 						<td>Nama</td>
 						<td>:</td>
-						<td colspan="4"><?php echo ucwords($konsumen->nama) ?></td>
+						<td colspan="4"><?php echo ucwords($data->nama) ?></td>
 					</tr>
 					<tr>
-						<td>Jenis Kelamin</td>
+						<td colspan="6"><strong>Data Rumah</strong></td>
+					</tr>					
+					<tr>
+						<td>Nama kavling</td>
 						<td>:</td>
-						<td colspan="4"><?php echo ucwords($konsumen->jk) ?></td>
+						<td colspan="4"><?php echo ucwords($data->nama_kavling) ?></td>
 					</tr>
 					<tr>
-						<td>Alamat</td>
-						<td>:</td>
-						<td colspan="4"><?php  echo ucwords($konsumen->alamat) ?></td>
+						<td colspan="6"><strong>Detail Pemesanan</strong></td>
 					</tr>
 					<tr>
-						<td>Telp / HP</td>
+						<td>Tanggal Pesan</td>
 						<td>:</td>
-						<td colspan="4"><?php echo $konsumen->telp ?></td>
+						<td colspan="4"><?php  echo ucwords($data->tgl_pemesanan) ?></td>
+					</tr>
+					<tr>
+						<td>Cara Bayar</td>
+						<td>:</td>
+						<td colspan="4"><?php echo strtoupper($data->cara_bayar) ?></td>
 					</tr>
 				</table>
 		<div class="footer" align="center">
