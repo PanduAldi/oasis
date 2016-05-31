@@ -45,7 +45,7 @@
 		</div>
 		<div class="form-group">
 			<label for="" class="control-label">Deskripsi : </label>
-			<textarea name="deskripsi" id="deskripsi" class="form-control" rows="10"><?php echo $event->deskripsi ?></textarea>
+			<textarea name="deskripsi" id="text" class="form-control" rows="10"><?php echo $event->deskripsi ?></textarea>
 		</div>
 		<div class="form-group">
 			<label for="" class="control-label">Periode : </label>

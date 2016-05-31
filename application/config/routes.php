@@ -38,7 +38,7 @@
 |
 */
 
-$route['default_controller'] = "c_admin";
+$route['default_controller'] = "c_web";
 $route['404_override'] = '';
 
 
@@ -52,6 +52,8 @@ $route['404_override'] = '';
 	$route['panel_login/proses']		= "c_auth/proses_auth"; // proses login
 	$route['panel_login/berhasil']   	= "c_auth/auth_success"; // proses login berhasil
 	$route['logout']					= "c_auth/logout";	
+
+	$route['login_member'] 				= "c_auth/login_member";
 
 
 	// admin page
@@ -128,6 +130,14 @@ $route['404_override'] = '';
 	$route['pembayaran/konfirmasi']			= "c_admin/konfirmasi_pembayaran";
 	$route['pembayaran/detail_pemesanan/(:any)'] = "c_admin/detail_pemesanan";
 	$route['pesan']							= "c_admin/pesan";
+	$route['pesan/balas/(:any)'] 			= "c_admin/balas_pesan";
+	$route['pesan/hapus'] 					= "c_admin/hapus_pesan";
+	$route['pesan/balas/hapus'] 			= "c_admin/hapus_balas_pesan";
+	$route['keluhan']						= "c_admin/keluhan";
+	$route['keluhan/balas/(:any)'] 			= "c_admin/balas_keluhan";
+	$route['keluhan/hapus'] 				= "c_admin/hapus_keluhan";
+	$route['keluhan/balas/hapus'] 			= "c_admin/hapus_balas_keluhan";
+	$route['keluhan/update_status'] 		= "c_admin/status_keluhan";
 
 
 /** End of Backend routes */
@@ -136,10 +146,35 @@ $route['404_override'] = '';
 /**
  * Frontend routes
  */
-
-	//do something.. 
+ 	
+	$route['home'] 	   					= "c_web/index";
+	$route['profil-kami']		 		= "c_web/profil";
+	$route['berita-property']			= "c_web/berita";	
+	$route['berita-property/(:any)'] 	= 'c_web/berita/$1';
+	$route['berita/(:any)_(:any)'] 		= "c_web/detail_berita";
+	$route['event-kami'] 				= "c_web/event";
+	$route['event-kami/(:any)'] 		= "c_web/event/$1";
+	$route['event/(:any)_(:any)'] 		= "c_web/detail_event";
+	$route['produk-kami'] 				= "c_web/produk_kami";
+	$route['produk-kami/blok/(:any)_(:any)'] = "c_web/detail_blok";
+	$route['kontak-kami'] 				= "c_web/kontak";
+	$route['galeri-foto'] 				= "c_web/gallery";
+	$route['galeri-foto/(:any)_(:any)'] = "c_web/detail_gallery";
+	$route['zoom-foto'] 				= "c_web/zoom_img_gallery";
 	
-
+	// Member access
+	$route['register'] 					= "c_web/register";
+	$route['profil-anda'] 				= "c_web/profil_user";
+	$route['form-pemesanan'] 			= "c_web/pemesanan";
+	$route['data-pemesanan'] 			= "c_web/data_pemesanan";
+	$route['form-pembayaran'] 			= "c_web/pembayaran";
+	$route['data-pembayaran'] 			= "c_web/data_pembayaran";
+	$route['cetak-kwitansi/(:any)'] 	= "c_web/cetak_kwitansi";
+	$route['cetak-spr/(:any)'] 			= "c_web/cetak_spr"; 	
+	$route['pesan-anda'] 				= "c_web/pesan";
+	$route['pesan/kirim-pesan'] 		= "c_web/kirim_pesan";
+	$route['keluhan-anda'] 				= "c_web/keluhan";
+	$route['keluhan/kirim-keluhan'] 	= "c_web/kirim_keluhan";
 
 /** End of Frontend routes */
 
