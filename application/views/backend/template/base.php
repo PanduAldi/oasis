@@ -7,8 +7,6 @@
 
 	<!-- bootstrap style -->
 	<link rel="stylesheet" href="<?php echo base_url() ?>assets/other-css/united.css">
-	<!-- font awesome  -->
-	<link rel="stylesheet" href="<?php echo base_url() ?>assets/font-awesome/css/font-awesome.min.css">
 	<!-- data-animate -->
 	<link rel="stylesheet" href="<?php echo base_url() ?>assets/data-animate.css">
 	<!-- tag input -->
@@ -17,7 +15,9 @@
 	<link rel="stylesheet" href="<?php echo base_url()  ?>assets/datatables/dataTables.bootstrap.css">
 	<!-- Sweet Alert -->
 	<link rel="stylesheet" href="<?php echo base_url() ?>assets/swal/sweetalert.css">
-
+	<!-- font awesome  -->
+	<link rel="stylesheet" href="<?php echo base_url() ?>assets/font-awesome/css/font-awesome.min.css">
+	
 	<style>
 		html {
 		  position: relative;
@@ -33,7 +33,7 @@
 		  bottom: 0;
 		  width: 100%;
 		  /* Set the fixed height of the footer here */
-		  height: 70px;
+		  height: 80px;
 		  background-color: #f5f5f5;
 		}
 	</style>
@@ -141,7 +141,7 @@
 		</div>	
 	</div>
     <footer class="footer">
-        <p align="center" style="margin-top:20px">Copyright &copy; 2016. <em>Sistem Informasi Pemasaran D'OASIS Residence.</em><br>Developed By. <em><a href="https://www.facebook.com/PanduAldiaja" target="_blank">Pandu Aldi Pratama</a></em></p>
+        <p align="center" style="margin-top:20px">Copyright &copy; 2016. <em>Sistem Informasi Pemasaran D'OASIS Residence.</em><br>Developed By. <em><a href="https://www.facebook.com/PanduAldiaja" target="_blank">Pandu Aldi Pratama</a></em><br><small>Server Process Time {elapsed_time}</small></p>
     </footer>
 
 
@@ -178,7 +178,7 @@
     	$(function(){
 
     		tinymce.init({
-    			selector : "textarea",
+    			selector : "#text",
     			plugins: [
 					      'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
 					      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',

@@ -53,7 +53,7 @@
 		</div>
 		<div class="form-group">
 			<label for="" class="control-label">Deskripsi : </label>
-			<textarea name="desk" id="desk" class="form-control" rows="10"><?php echo $berita->deskripsi ?></textarea>
+			<textarea name="desk" id="text" class="form-control" rows="10"><?php echo $berita->deskripsi ?></textarea>
 		</div>
 		<div class="form-group">
 			<label for="" class="control-label">Gambar : </label>

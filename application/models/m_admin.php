@@ -105,10 +105,50 @@ class M_admin extends CI_Model {
 		return $this->db->get();
 	}
 
+	public function join_pesan($id)
+	{
+		$this->db->select("*");
+		$this->db->from("pesan");
+		$this->db->join("user", "user.id_user = pesan.id_user");
+		$this->db->where('pesan.kd_pesan', $id);
+		return $this->db->get()->row();
+	}
+
+	public function join_keluhan($id)
+	{
+		$this->db->select("*");
+		$this->db->from("keluhan");
+		$this->db->join("user", "user.id_user = keluhan.id_user");
+		$this->db->where('keluhan.kd_keluhan', $id);
+		return $this->db->get()->row();
+	}
+
+	public function get_by_parent($table, $id)
+	{
+		$this->db->select('*');
+		$this->db->from($table);
+		$this->db->join("user", "user.id_user = ".$table.".id_user");
+		$this->db->where($table.".parent", $id);
+		return $this->db->get()->result();	
+	}
+
 	public function notif_pesan()
 	{
 		$this->db->where('read', 'n');
 		return $this->db->get('pesan')->num_rows();
+	}
+
+	public function notif_keluhan()
+	{
+		$this->db->where('read', 'n');
+		return $this->db->get('keluhan')->num_rows();
+	}
+
+	public function notif_balas_pesan($table, $id)
+	{
+		$this->db->where('read', 'n');
+		$this->db->where('parent', $id);
+		return $this->db->get($table)->num_rows();
 	}
 
 	public function auto_number($table, $kolom, $lebar=0, $awalan=null)

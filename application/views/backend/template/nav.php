@@ -23,13 +23,53 @@
 	</li>
 <?php endif; ?>
 	<li class="dropdown">
-		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i>  Kotak Masuk <b class="caret"></b></a>
-		<ul class="dropdown-menu">
+		<?php  
+			$notif_pesan = $this->m_admin->notif_pesan();
+			$notif_keluhan =  $this->m_admin->notif_keluhan();
+		?>
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i>  
+			Kotak Masuk 
 			<?php  
-				$notif_pesan = $this->m_admin->notif_pesan();
+				$jum = $notif_pesan + $notif_keluhan;
+
+				if ($jum == "0") 
+				{
+					echo "";
+				}
+				else
+				{
+					echo '<span class="label label-warning">'.$jum.'</span>';
+				}				
 			?>
-			<li><a href="<?php echo site_url('pesan') ?>">Pesan <span class="label label-warning"><?php echo $notif_pesan ?></span></a></li>
-			<li><a href="<?php echo site_url('keluhan') ?>">Keluhan</a></li>
+		<b class="caret"></b></a>
+		<ul class="dropdown-menu">
+			<li><a href="<?php echo site_url('pesan') ?>">
+				Pesan
+				<?php 
+					if ($notif_pesan == "0") 
+					{
+						echo "";
+					}
+					else
+					{
+						echo '<span class="label label-warning">'.$notif_pesan.'</span>';
+					}
+				?>
+				</a>
+			</li>
+			<li><a href="<?php echo site_url('keluhan') ?>">
+				Keluhan
+				<?php 
+					if ($notif_keluhan == "0") 
+					{
+						echo "";
+					}
+					else
+					{
+						echo '<span class="label label-warning">'.$notif_keluhan.'</span>';
+					}
+				?>
+			</a></li>
 		</ul>
 	</li>
 	<li class="dropdown">

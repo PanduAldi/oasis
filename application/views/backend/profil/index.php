@@ -22,7 +22,7 @@
 			</div>
 			<div class="form-group">
 				<label for="" class="control-label">Isi Profil :</label>
-				<textarea name="isi" id="" cols="30" rows="10"><?php echo $profil->deskripsi ?></textarea>
+				<textarea name="isi" id="text" cols="30" rows="10"><?php echo $profil->deskripsi ?></textarea>
 
 			</div>
 			<div class="form-group">

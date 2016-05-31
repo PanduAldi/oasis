@@ -1136,7 +1136,7 @@ class C_admin extends CI_Controller {
 
 	public function edit_profil_user()
 	{
-		$id = $this->session->userdata('profil');
+		$id = $this->session->userdata('id_user');
 
 		$data = array(
 						"title" => "Profil User",
@@ -1320,7 +1320,145 @@ class C_admin extends CI_Controller {
 		$this->admin_template->display('backend/pesan/index', $data);
 	}
 
+	public function balas_pesan()
+	{
+		$id  = $this->uri->segment(3);
 
+		// update status pesan
+		$get  = $this->m_admin->get_id('pesan', 'parent', $id)->result();
+		foreach ($get as $g) 
+		{
+			$this->m_admin->update_data('pesan', array('read' => 'y'), 'parent', $id);
+		}
+	
+		$data = array(
+						"title" => "Balas Pesan ".$id,
+						"data_parent" => $this->m_admin->join_pesan($id),
+						"data" => $this->m_admin->get_by_parent('pesan', $id),
+						"kd_pesan" => $this->m_admin->auto_number('pesan', 'kd_pesan', 3, "PSN")
+					);
+
+		$this->admin_template->display('backend/pesan/balas_pesan', $data);
+
+		if (isset($_POST['balas'])) 
+		{
+			$record  = array(
+								"kd_pesan" => $this->input->post('kd_pesan'),
+								"tgl_pesan" => date("Y-m-d H:i:s"),
+								"pesan" => $this->input->post('pesan'),
+								"id_user" => $this->session->userdata('id_user'),
+								"parent" => $id,
+								"read" => "n"
+ 							);
+
+			$this->m_admin->insert_data('pesan', $record);
+			$this->session->set_flashdata('alert_balas', '<script> $(function(){ swal("Sukses", "Pesan Berhasil di Balas", "success") })</script>');
+			redirect('pesan/balas/'.$id,'refresh');
+		}
+	}
+
+	public function hapus_pesan()
+	{
+		$id = $this->input->post('id');
+
+		$this->m_admin->delete_data('pesan', 'parent', $id);
+		$this->m_admin->delete_data('pesan', 'kd_pesan', $id);
+		$this->session->set_flashdata('delete_sukses', '<div class="alert alert-info"><i class="fa fa-info"></i> Pesan berhasil dihapus</div>');
+	}
+
+	public function hapus_balas_pesan()
+	{
+		$id = $this->input->post('id');
+
+		$this->m_admin->delete_data('pesan', 'kd_pesan', $id);
+	}
+	//end
+	
+
+	/**
+	 * Keluhan
+	 */
+
+	public function keluhan()
+	{
+		$data_keluhan = $this->m_admin->get_id('keluhan', "parent", "0")->result();
+
+		foreach($data_keluhan as $p)
+		{
+			$this->m_admin->update_data('keluhan', array("read" => "y"), "parent", "0");
+		}
+
+		$data = array(
+						"title" => "Keluhan",
+						"keluhan" => $data_keluhan
+					);
+
+		$this->admin_template->display('backend/keluhan/index', $data);
+	}
+
+	public function balas_keluhan()
+	{
+		$id  = $this->uri->segment(3);
+
+		// update status pesan
+		$get  = $this->m_admin->get_id('keluhan', 'parent', $id)->result();
+		foreach ($get as $g) 
+		{
+			$this->m_admin->update_data('keluhan', array('read' => 'y'), 'parent', $id);
+		}
+	
+		$data = array(
+						"title" => "Balas Keluhan ".$id,
+						"data_parent" => $this->m_admin->join_keluhan($id),
+						"data" => $this->m_admin->get_by_parent('keluhan', $id),
+						"kd_keluhan" => $this->m_admin->auto_number('keluhan', 'kd_keluhan', 3, "KLH")
+					);
+
+		$this->admin_template->display('backend/keluhan/balas_keluhan', $data);
+
+		if (isset($_POST['balas'])) 
+		{
+			$record  = array(
+								"kd_keluhan" => $this->input->post('kd_pesan'),
+								"tgl_keluhan" => date("Y-m-d H:i:s"),
+								"keluhan" => $this->input->post('keluhan'),
+								"id_user" => $this->session->userdata('id_user'),
+								"parent" => $id,
+								"read" => "n"
+ 							);
+
+			$this->m_admin->insert_data('keluhan', $record);
+			$this->session->set_flashdata('alert_balas', '<script> $(function(){ swal("Sukses", "Keluhan Berhasil di Balas", "success") })</script>');
+			redirect('keluhan/balas/'.$id,'refresh');
+		}
+	}
+
+	public function hapus_keluhan()	
+	{
+		$id = $this->input->post('id');
+
+		$this->m_admin->delete_data('keluhan', 'parent', $id);
+		$this->m_admin->delete_data('keluhan', 'kd_keluhan', $id);
+		$this->session->set_flashdata('delete_sukses', '<div class="alert alert-info"><i class="fa fa-info"></i> Keluhan berhasil dihapus</div>');
+	}
+
+	public function hapus_balas_keluhan()
+	{
+		$id = $this->input->post('id');
+
+		$this->m_admin->delete_data('keluhan', 'kd_keluhan', $id);
+	}
+
+	public function status_keluhan()
+	{
+		$id = $this->input->post('id');
+		$status = $this->input->post('status');
+
+		$this->m_admin->update_data('keluhan', array("status"=>$status), 'kd_keluhan', $id);
+
+	}
+	// End
+	
 
 	/**
 	 * Feature option
