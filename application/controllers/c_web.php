@@ -274,7 +274,7 @@ class C_web extends CI_Controller {
 		$this->load->view('frontend/template/footer');
 	}
 
-
+	// END
 
 	/**
 	 * Feature Section
