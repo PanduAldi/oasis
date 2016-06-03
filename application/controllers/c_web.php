@@ -263,7 +263,7 @@ class C_web extends CI_Controller {
 		$id = $ex[0];
 		$data = array(
 						"title" => "Detail Blok ".$ex[1],
-						"blok" => $this->m_web->get_detail_blok($id)->row(),
+						"blok" => $this->m_web->get_detail_blok($id)->row_array(),
 						"rumah" => $this->m_web->get_detail_rumah($id)
 					);
 
@@ -273,8 +273,241 @@ class C_web extends CI_Controller {
 		$this->load->view('frontend/template/sidebar');
 		$this->load->view('frontend/template/footer');
 	}
-
 	// END
+
+	/**
+	 * member control
+	 */
+
+	# Registrasi
+	public function register()
+	{
+		$data = array(
+						"title" => "Registrasi",
+						"id_konsumen" => $this->m_web->auto_number('konsumen', 'id_konsumen', 3, "KSM"), 
+						"id_user" => $this->m_web->auto_number('user', 'id_user', 3, "USR")
+					);
+
+		//show time
+		$this->load->view('frontend/template/header', $data);
+		$this->load->view('frontend/member/register', $data);
+		$this->load->view('frontend/template/sidebar');
+		$this->load->view('frontend/template/footer');
+
+
+		if (isset($_POST['register'])) 
+		{
+			$id_user = $this->input->post('id_user');
+			$id_konsumen = $this->input->post('id_konsumen');
+
+			$record_user = array(
+									"id_user" => $id_user,
+									"email" => $this->input->post('email'),
+									"username" => $this->input->post('username'),
+									"password" => md5($this->input->post('password')),
+									"level" => "3",
+									"tgl_register" => date('Y-m-d'),
+									"keterangan" => "konsumen"
+ 								);	
+
+			$record_konsumen = array(
+										"id_konsumen" => $id_konsumen,
+										"no_ktp" => $this->input->post('no_ktp'),
+										"nama" => $this->input->post('nama'),
+										"jk" => $this->input->post('jk'),
+										"alamat" => $this->input->post('alamat'),
+										"kota" => $this->input->post('kota'),
+										"provinsi" => $this->input->post('provinsi'),
+										"kode_pos" => $this->input->post('kode_pos'),
+										"telp" => $this->input->post('telp'),
+										"id_user" => $id_user
+									);
+
+			$this->m_web->insert_data('user', $record_user);
+			$this->m_web->insert_data('konsumen', $record_konsumen);
+			redirect('register-berhasil','refresh');
+		}
+	}
+
+	public function register_success()
+	{
+		$data = array(
+						"title" => "Registrasi Berhasil"
+					);
+
+		//show 
+		$this->load->view('frontend/template/header', $data);
+		$this->load->view('frontend/member/register_berhasil');
+		$this->load->view('frontend/template/sidebar');
+		$this->load->view('frontend/template/footer');
+	}
+
+	#END
+
+	#Profil User
+	public function profil_user()
+	{
+		$this->cek_login();
+
+		$id  = $this->session->userdata('id_user');
+
+		$data  = array(
+						"title" => "Profil Anda",
+						"konsumen" => $this->m_web->get_id('konsumen', 'id_user', $id),
+						"user" => $this->m_web->get_id('user', 'id_user', $id)
+					);
+
+		//show time
+		$this->load->view('frontend/template/header', $data);
+		$this->load->view('frontend/member/profil_user', $data);
+		$this->load->view('frontend/template/sidebar');
+		$this->load->view('frontend/template/footer');
+
+		if (isset($_POST['edit_konsumen'])) 
+		{
+			$record  = array(
+								"no_ktp" => $this->input->post('no_ktp'),
+								"nama" => $this->input->post('nama'),
+								"alamat" => $this->input->post('alamat'),
+								"jk" => $this->input->post('jk'),
+								"kota" => $this->input->post('kota'),
+								"provinsi" => $this->input->post('provinsi'),
+								"kode_pos" => $this->input->post('kode_pos'),
+								"telp" => $this->input->post('telp')
+							);
+			$this->m_web->update_data('konsumen', $record, 'id_user', $id);
+			$this->session->set_flashdata('alert-update', '<script>$(function(){swal("Berhasil", "Update Data Profil Berhasil", "success")})</script>');
+			redirect('profil-anda','refresh');
+		}
+		elseif (isset($_POST['edit_user'])) 
+		{
+			$record_user  = array(
+								"email" => $this->input->post('email'),
+								"username" => $this->input->post('username')
+							);
+
+
+			$this->m_web->update_data('user', $record_user, 'id_user', $id);
+			$this->session->set_flashdata('alert-update', '<script>$(function(){swal("Berhasil", "Update Data User Berhasil", "success")})</script>');
+			redirect('profil-anda','refresh');		
+		}
+		elseif (isset($_POST['ganti_password'])) 
+		{
+			$record_password = array("password" => $this->input->post('password'));
+			$this->m_web->update_data('user', $record_password, 'id_user', $id);
+			$this->session->set_flashdata('alert-update', '<script>$(function(){swal("Berhasil", "Ganti Password Berhasil", "success")})</script>');
+			redirect('profil-anda','refresh');
+		}
+	}
+	#END
+
+	#Pemesanan
+	public function pemesanan()
+	{
+		$kd_rumah = $this->input->post('id');
+
+		//record
+		$record = array(
+						  "id_pemesanan" => $this->m_web->auto_number('pemesanan', 'id_pemesanan', 3, 'PMS'),
+						  "kd_rumah" 	 => $kd_rumah,
+						  "id_user" 	 => $this->session->userdata('id_user'),
+						  "tgl_pemesanan" => date('Y-m-d'),
+						  "status" => "belum dibayar"
+					   );
+		$this->m_web->insert_data('pemesanan', $record);
+		$this->m_web->update_data('rumah', array('status' => 'dibooking'), 'kd_rumah', $kd_rumah);
+
+	}
+	
+	public function pemesanan_success()
+	{
+		$this->cek_login();
+		$data  = array('title' => 'Pemesanan Sukses');
+
+		//show time
+		$this->load->view('frontend/template/header', $data);
+		$this->load->view('frontend/member/pemesanan_sukses');
+		$this->load->view('frontend/template/sidebar');
+		$this->load->view('frontend/template/footer');
+	}
+	
+	public function data_pemesanan()
+	{
+		$this->cek_login();
+		$data = array(
+						"title" => "Data Pemesanan Anda",
+						"pemesanan" => $this->m_web->tampil_pemesanan($this->session->userdata('id_user'))
+
+					);
+
+		//showtime
+		$this->load->view('frontend/template/header', $data);
+		$this->load->view('frontend/member/data_pemesanan', $data);
+		$this->load->view('frontend/template/sidebar');
+		$this->load->view('frontend/template/footer');
+	}
+
+	public function cara_bayar_update()
+	{
+		$this->m_web->update_data('pemesanan', array('cara_bayar' => $this->input->post('cara')), 'id_user', $this->session->userdata('id_user'));
+		
+		echo $this->input->post('cara');
+	}
+	#END
+	
+	#pembayaran
+	public function pembayaran()
+	{
+		$this->cek_login();
+		$id_pemesanan = $this->uri->segment(2);
+		$data = array(
+						"title" => "Form Pembayaran",
+						"id_pembayaran" => $this->m_web->auto_number('pembayaran', 'id_pembayaran', 3, 'PMB'),
+						"id_pemesanan" => $id_pemesanan,
+						"keterangan" => $this->m_web->get_periode($id_pemesanan)->row()
+					);
+
+		//show time
+		$this->load->view('frontend/template/header', $data);
+		$this->load->view('frontend/member/form_pembayaran', $data);
+		$this->load->view('frontend/template/sidebar');
+		$this->load->view('frontend/template/footer');
+
+		if (isset($_POST['pembayaran'])) 
+		{
+			$record = array(
+							  'id_pembayaran' => $this->input->post('id_pembayaran'),
+							  'id_pemesanan' => $id_pemesanan,
+							  'nama_bank' => $this->input->post('nama_bank'),
+							  'no_rekening' => $this->input->post('no_rekening'),
+							  'atas_nama' => $this->input->post('atas_nama'),
+							  'tgl_pembayaran' => date('Y-m-d'),
+							  'jml_pembayaran' => $this->input->post('jml_pembayaran'),
+							  'keterangan' => $this->input->post('keterangan'),
+							  'status' => "n"
+							);
+
+			$this->m_web->insert_data('pembayaran', $record);
+			$this->m_web->update_data('pemesanan', array('status' => "sudah dibayar"), 'id_pemesanan', $id_pemesanan);
+			redirect('pembayaran-sukses','refresh');
+		}
+
+	}
+
+	public function pembayaran_success()
+	{
+		$data = array(
+						'title' => "Pembayaran Sukses",
+					);
+
+		//show time
+		$this->load->view('frontend/template/header', $data);
+		$this->load->view('frontend/member/pembayaran_sukses');
+		$this->load->view('frontend/template/sidebar');
+		$this->load->view('frontend/template/footer');
+
+	}
+	#END
 
 	/**
 	 * Feature Section
@@ -283,6 +516,7 @@ class C_web extends CI_Controller {
 	{
 		if ($this->session->userdata('login_member') == false) 
 		{
+			$this->session->set_flashdata('alert-login', '<script>$(function(){swal("Oopss!!", "Anda tidak dikenankan untuk mengakses halaman tersebut. Silahkan login terlebih dahulu", "error")})</script>');
 			redirect('home','refresh');
 		}
 	}
