@@ -53,8 +53,8 @@ $route['404_override'] = '';
 	$route['panel_login/berhasil']   	= "c_auth/auth_success"; // proses login berhasil
 	$route['logout']					= "c_auth/logout";	
 
-	$route['login_member'] 				= "c_auth/login_member";
-
+	$route['login-member'] 				= "c_auth/login_member";
+	$route['logout-member'] 		 	= "c_auth/logout_member";
 
 	// admin page
 	$route['profil']  						= "c_admin/profil";
@@ -164,17 +164,23 @@ $route['404_override'] = '';
 	
 	// Member access
 	$route['register'] 					= "c_web/register";
+	$route['register-berhasil'] 		= "c_web/register_success";
 	$route['profil-anda'] 				= "c_web/profil_user";
-	$route['form-pemesanan'] 			= "c_web/pemesanan";
+	$route['konfirmasi-pemesanan'] 		= "c_web/pemesanan";
+	$route['pemesanan-sukses'] 			= "c_web/pemesanan_success";
 	$route['data-pemesanan'] 			= "c_web/data_pemesanan";
-	$route['form-pembayaran'] 			= "c_web/pembayaran";
+	$route['data-pemesanan/cara-bayar'] = "c_web/cara_bayar_update";
+	$route['form-pembayaran/(:any)'] 	= "c_web/pembayaran";
 	$route['data-pembayaran'] 			= "c_web/data_pembayaran";
+	$route['pembayaran-sukses'] 		= "c_web/pembayaran_success";
 	$route['cetak-kwitansi/(:any)'] 	= "c_web/cetak_kwitansi";
 	$route['cetak-spr/(:any)'] 			= "c_web/cetak_spr"; 	
 	$route['pesan-anda'] 				= "c_web/pesan";
-	$route['pesan/kirim-pesan'] 		= "c_web/kirim_pesan";
+	$route['pesan-anda/kirim-pesan']	= "c_web/kirim_pesan";
+	$route['pesan-anda/lihat/(:any)'] 	= "c_web/balas_pesan";	
 	$route['keluhan-anda'] 				= "c_web/keluhan";
-	$route['keluhan/kirim-keluhan'] 	= "c_web/kirim_keluhan";
+	$route['keluhan-anda/lihat/(:any)'] = "c_web/balas_keluhan";
+	$route['keluhan-anda/kirim-keluhan']= "c_web/kirim_keluhan";
 
 /** End of Frontend routes */
 

@@ -56,7 +56,7 @@
 							        		<label for="">Luas Tanah : </label> <?php echo $p->luas_tanah ?> m<sup>2</sup><br>	
 							        		<label for="">Harga : </label> Rp. <?php echo number_format($p->harga, 0, ".", "," ) ?>	
 							        	</p>
-							        	<p><a href="<?php echo site_url('produk/blok/'.$p->kd_blok.'_'.$p->nama_blok) ?>" class="btn btn-primary" role="button">Lihat Detail Rumah</a> 
+							        	<p><a href="<?php echo site_url('produk-kami/blok/'.$p->kd_blok.'_'.$p->nama_blok) ?>" class="btn btn-primary" role="button">Lihat Detail Rumah</a> 
 									</div>
 								</div>
 					 		</div>
@@ -95,7 +95,7 @@
 					<div class="row">
 						<?php foreach ($galeri as $g): ?>
 							<div class="col-md-4">
-								<img src="<?php echo base_url('img/logo.png') ?>" class="img-thumbnail" alt="">
+								<img src="<?php echo base_url('img/galeri.jpg') ?>" class="img-thumbnail" alt="">
 								<div class="well well-sm" align="center">
 									<a href="<?php echo site_url('galeri-foto/'.$g->id_galeri."_".url_title($g->nama)) ?>"><?php echo $g->nama ?></a>
 								</div>
@@ -107,3 +107,4 @@
 		</div>
 	</div>
 </div>
+<?php echo $this->session->flashdata('alert-login'); ?>

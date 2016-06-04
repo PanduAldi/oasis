@@ -3,7 +3,7 @@
 		if ($this->session->userdata('login_member') == true) 
 		{
 		?>
-			<div class="panel panel-default">
+			<div class="panel panel-primary">
 				<div class="panel-heading">
 					Menu Anda
 				</div>
@@ -14,7 +14,7 @@
 						<li><a href="<?php echo site_url('data-pembayaran') ?>">Data Pembayaran</a></li>
 						<li><a href="<?php echo site_url('pesan-anda') ?>">Pesan</a></li>
 						<li><a href="<?php echo site_url('keluhan-anda') ?>">Keluhan</a></li>
-						<li><a href="<?php echo site_url('logout') ?>">Logout</a></li>
+						<li><a href="<?php echo site_url('logout-member') ?>">Logout</a></li>
 					</ul>
 				</div>
 			</div>
@@ -27,7 +27,7 @@
 					Login Panel
 				</div>
 				<div class="panel-body">
-					<form action="<?php echo site_url('login_member') ?>" name="f_login_member" method="POST">
+					<form action="<?php echo site_url('login-member') ?>" name="f_login_member" method="POST">
 						<div class="form-group">
 							<input type="text" name="username" class="form-control" placeholder="Masukan Username">
 						</div>

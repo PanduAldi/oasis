@@ -1025,15 +1025,15 @@ class C_admin extends CI_Controller {
 			$config['upload_path'] = './img/gallery/';
 			$config['allowed_types'] = 'gif|jpg|jpeg|png';
 			$config['max_size']  = '8000';
-			$config['max_width']  = '2024';
-			$config['max_height']  = '1768';
+			$config['max_width']  = '5024';
+			$config['max_height']  = '3768';
 			$config['remove_spaces'] = true;
 
 			$this->upload->initialize($config);
 			
 			if ( ! $this->upload->do_upload('gambar')){
 				$this->session->set_flashdata('img_error', '<div class="alert alert-danger">'.$this->upload->display_errors().'</div>');
-				redirect('detail_gallery/tambah_gallery/'.$id,'refresh');
+				redirect('gallery/tambah_detail/'.$id,'refresh');
 			}
 			else
 			{
@@ -1253,8 +1253,14 @@ class C_admin extends CI_Controller {
 	{
 		$id = $this->input->post('id');
 
+		//get rumah
+		$get_rumah = $this->m_admin->get_id('pemesanan', 'id_pemesanan', $id)->row();
+
+		$this->m_admin->update_data('rumah', array('status' => 'tersedia'), 'kd_rumah', $get_rumah->kd_rumah);
+
 		$this->m_admin->delete_data('pembayaran', 'id_pemesanan', $id);
 		$this->m_admin->delete_data('pemesanan', 'id_pemesanan', $id);
+
 		$this->session->set_flashdata('delete_sukses', '<div class="alert alert-info"><i class="fa fa-info"></i> Data Berhasil di hapus</div>');
 	
 	}
@@ -1279,8 +1285,13 @@ class C_admin extends CI_Controller {
 	public function konfirmasi_pembayaran()
 	{
 		$id  = $this->input->post('id');
-		
+			
+		$get_pembayaran = $this->m_admin->get_id('pembayaran', 'id_pembayaran', $id)->row();
+
+		$get_rumah  = $this->m_admin->get_id('pemesanan', 'id_pemesanan', $get_pembayaran->id_pemesanan);
+
 		$this->m_admin->update_data('pembayaran', array('status' => 'y'), 'id_pembayaran', $id);
+		$this->m_admin->update_data('rumah', array('status' => 'dipesan'), 'kd_rumah', $get_rumah->kd_rumah);
 	}
 
 	public function detail_pemesanan()

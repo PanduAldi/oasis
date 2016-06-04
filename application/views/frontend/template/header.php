@@ -49,6 +49,16 @@
 	<script src="<?php echo base_url() ?>assets/bootstrap/js/bootstrap.min.js"></script>
 </head>
 <body>
+<!-- Facebook Plugin -->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/id_ID/sdk.js#xfbml=1&version=v2.6&appId=559696837515393";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
 	<div class="header">
 		<nav class="navbar navbar-inverse" role="navigation">
 			<div class="container-fluid">

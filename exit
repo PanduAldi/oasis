@@ -1,0 +1,813 @@
+[1mdiff --git a/application/config/routes.php b/application/config/routes.php[m
+[1mindex e382b36..1511cd6 100755[m
+[1m--- a/application/config/routes.php[m
+[1m+++ b/application/config/routes.php[m
+[36m@@ -53,8 +53,8 @@[m [m$route['404_override'] = '';[m
+ 	$route['panel_login/berhasil']   	= "c_auth/auth_success"; // proses login berhasil[m
+ 	$route['logout']					= "c_auth/logout";	[m
+ [m
+[31m-	$route['login_member'] 				= "c_auth/login_member";[m
+[31m-[m
+[32m+[m	[32m$route['login-member'] 				= "c_auth/login_member";[m
+[32m+[m	[32m$route['logout-member'] 		 	= "c_auth/logout_member";[m
+ [m
+ 	// admin page[m
+ 	$route['profil']  						= "c_admin/profil";[m
+[36m@@ -164,17 +164,23 @@[m [m$route['404_override'] = '';[m
+ 	[m
+ 	// Member access[m
+ 	$route['register'] 					= "c_web/register";[m
+[32m+[m	[32m$route['register-berhasil'] 		= "c_web/register_success";[m
+ 	$route['profil-anda'] 				= "c_web/profil_user";[m
+[31m-	$route['form-pemesanan'] 			= "c_web/pemesanan";[m
+[32m+[m	[32m$route['konfirmasi-pemesanan'] 		= "c_web/pemesanan";[m
+[32m+[m	[32m$route['pemesanan-sukses'] 			= "c_web/pemesanan_success";[m
+ 	$route['data-pemesanan'] 			= "c_web/data_pemesanan";[m
+[31m-	$route['form-pembayaran'] 			= "c_web/pembayaran";[m
+[32m+[m	[32m$route['data-pemesanan/cara-bayar'] = "c_web/cara_bayar_update";[m
+[32m+[m	[32m$route['form-pembayaran/(:any)'] 	= "c_web/pembayaran";[m
+ 	$route['data-pembayaran'] 			= "c_web/data_pembayaran";[m
+[32m+[m	[32m$route['pembayaran-sukses'] 		= "c_web/pembayaran_success";[m
+ 	$route['cetak-kwitansi/(:any)'] 	= "c_web/cetak_kwitansi";[m
+ 	$route['cetak-spr/(:any)'] 			= "c_web/cetak_spr"; 	[m
+ 	$route['pesan-anda'] 				= "c_web/pesan";[m
+[31m-	$route['pesan/kirim-pesan'] 		= "c_web/kirim_pesan";[m
+[32m+[m	[32m$route['pesan-anda/kirim-pesan']	= "c_web/kirim_pesan";[m
+[32m+[m	[32m$route['pesan-anda/lihat/(:any)'] 	= "c_web/balas_pesan";[m[41m	[m
+ 	$route['keluhan-anda'] 				= "c_web/keluhan";[m
+[31m-	$route['keluhan/kirim-keluhan'] 	= "c_web/kirim_keluhan";[m
+[32m+[m	[32m$route['keluhan-anda/lihat/(:any)'] = "c_web/balas_keluhan";[m
+[32m+[m	[32m$route['keluhan-anda/kirim-keluhan']= "c_web/kirim_keluhan";[m
+ [m
+ /** End of Frontend routes */[m
+ [m
+[1mdiff --git a/application/controllers/c_admin.php b/application/controllers/c_admin.php[m
+[1mindex 54bcf3a..c542d5f 100755[m
+[1m--- a/application/controllers/c_admin.php[m
+[1m+++ b/application/controllers/c_admin.php[m
+[36m@@ -1025,15 +1025,15 @@[m [mclass C_admin extends CI_Controller {[m
+ 			$config['upload_path'] = './img/gallery/';[m
+ 			$config['allowed_types'] = 'gif|jpg|jpeg|png';[m
+ 			$config['max_size']  = '8000';[m
+[31m-			$config['max_width']  = '2024';[m
+[31m-			$config['max_height']  = '1768';[m
+[32m+[m			[32m$config['max_width']  = '5024';[m
+[32m+[m			[32m$config['max_height']  = '3768';[m
+ 			$config['remove_spaces'] = true;[m
+ [m
+ 			$this->upload->initialize($config);[m
+ 			[m
+ 			if ( ! $this->upload->do_upload('gambar')){[m
+ 				$this->session->set_flashdata('img_error', '<div class="alert alert-danger">'.$this->upload->display_errors().'</div>');[m
+[31m-				redirect('detail_gallery/tambah_gallery/'.$id,'refresh');[m
+[32m+[m				[32mredirect('gallery/tambah_detail/'.$id,'refresh');[m
+ 			}[m
+ 			else[m
+ 			{[m
+[36m@@ -1253,8 +1253,14 @@[m [mclass C_admin extends CI_Controller {[m
+ 	{[m
+ 		$id = $this->input->post('id');[m
+ [m
+[32m+[m		[32m//get rumah[m
+[32m+[m		[32m$get_rumah = $this->m_admin->get_id('pemesanan', 'id_pemesanan', $id)->row();[m
+[32m+[m
+[32m+[m		[32m$this->m_admin->update_data('rumah', array('status' => 'tersedia'), 'kd_rumah', $get_rumah->kd_rumah);[m
+[32m+[m
+ 		$this->m_admin->delete_data('pembayaran', 'id_pemesanan', $id);[m
+ 		$this->m_admin->delete_data('pemesanan', 'id_pemesanan', $id);[m
+[32m+[m
+ 		$this->session->set_flashdata('delete_sukses', '<div class="alert alert-info"><i class="fa fa-info"></i> Data Berhasil di hapus</div>');[m
+ 	[m
+ 	}[m
+[36m@@ -1279,8 +1285,13 @@[m [mclass C_admin extends CI_Controller {[m
+ 	public function konfirmasi_pembayaran()[m
+ 	{[m
+ 		$id  = $this->input->post('id');[m
+[31m-		[m
+[32m+[m[41m			[m
+[32m+[m		[32m$get_pembayaran = $this->m_admin->get_id('pembayaran', 'id_pembayaran', $id)->row();[m
+[32m+[m
+[32m+[m		[32m$get_rumah  = $this->m_admin->get_id('pemesanan', 'id_pemesanan', $get_pembayaran->id_pemesanan);[m
+[32m+[m
+ 		$this->m_admin->update_data('pembayaran', array('status' => 'y'), 'id_pembayaran', $id);[m
+[32m+[m		[32m$this->m_admin->update_data('rumah', array('status' => 'dipesan'), 'kd_rumah', $get_rumah->kd_rumah);[m
+ 	}[m
+ [m
+ 	public function detail_pemesanan()[m
+[1mdiff --git a/application/controllers/c_auth.php b/application/controllers/c_auth.php[m
+[1mindex 78f09e3..a821288 100755[m
+[1m--- a/application/controllers/c_auth.php[m
+[1m+++ b/application/controllers/c_auth.php[m
+[36m@@ -5,7 +5,7 @@[m [mclass C_auth extends CI_Controller {[m
+ 	public function __construct()[m
+ 	{[m
+ 		parent::__construct();[m
+[31m-		$this->load->model('m_admin');[m
+[32m+[m		[32m$this->load->model(array('m_admin', 'm_web'));[m
+ [m
+ 	[m
+ 		if ($this->session->userdata("is_login") == true) [m
+[36m@@ -76,12 +76,60 @@[m [mclass C_auth extends CI_Controller {[m
+ 		$this->load->view('backend/auth/sukses', $data);[m
+ 	}[m
+ [m
+[32m+[m	[32mpublic function login_member()[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$username = $this->input->post('username');[m
+[32m+[m		[32m$password = md5($this->input->post('password'));[m
+[32m+[m
+[32m+[m		[32m$cek_login = $this->m_web->auth($username, $password);[m
+[32m+[m
+[32m+[m		[32mif ($cek_login->num_rows() == 0)[m[41m [m
+[32m+[m		[32m{[m
+[32m+[m				[32m$this->session->set_flashdata('alert-login', '<script>$(function(){ swal("Login Gagal", "Username / Password Salah. Silahkan mencoba kembali. Jika anda belum registrasi, silahkan registrasi terlebih dahulu", "error") })</script>');[m
+[32m+[m				[32mredirect('home','refresh');[m
+[32m+[m		[32m}[m
+[32m+[m		[32melse[m
+[32m+[m		[32m{[m
+[32m+[m			[32m$res = $cek_login->row();[m
+[32m+[m
+[32m+[m			[32mif ($res->level == "3")[m[41m [m
+[32m+[m			[32m{[m
+[32m+[m[32m// session input[m
+[32m+[m				[32m$sess_data = array([m
+[32m+[m									[32m 'id_user' => $res->id_user,[m
+[32m+[m								[32m     'username' => $username,[m
+[32m+[m								[32m     'login_member'  => true,[m
+[32m+[m								[32m     'level'    => $res->level,[m
+[32m+[m								[32m     'keterangan' => $res->keterangan[m
+[32m+[m								[32m   );[m
+[32m+[m				[32m$this->session->set_userdata($sess_data);[m
+[32m+[m
+[32m+[m				[32m$this->session->set_flashdata('alert-login', '<script>$(function(){ swal("Login Berhasil", "Login Berhasil. Sekarang anda dapat memanfaatkan fitur yang ada di sistem kami.", "success") })</script>');[m
+[32m+[m				[32mredirect('home','refresh');[m
+[32m+[m
+[32m+[m			[32m}[m
+[32m+[m			[32melse[m
+[32m+[m			[32m{[m
+[32m+[m				[32m$this->session->set_flashdata('alert-login', '<script>$(function(){ swal("Login Gagal", "Jika anda admin / marketing silahkan ke panel login yang berada di halaman administrator", "error") })</script>');[m
+[32m+[m				[32mredirect('home','refresh');[m
+[32m+[m
+[32m+[m			[32m}[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}[m
+[32m+[m
+ 	public function logout()[m
+ 	{[m
+ 		$this->session->sess_destroy();[m
+ 		$this->session->set_flashdata('logout_success', '<div class="alert alert-info" data-animate="fadeInLeft">Logout Sukses... </div>');[m
+ 		redirect('panel_login');[m
+ 	}[m
+[32m+[m
+[32m+[m	[32mpublic function logout_member()[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->session->sess_destroy();[m
+[32m+[m		[32m$this->session->set_flashdata('alert-login', '<script>$(function(){ swal("Logout Berhasil", "Logout Berhasil", "success") })</script>');[m
+[32m+[m		[32mredirect('home');[m
+[32m+[m	[32m}[m
+ }[m
+ [m
+ /* End of file  */[m
+[1mdiff --git a/application/controllers/c_web.php b/application/controllers/c_web.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mindex e353822..38baa70[m
+[1m--- a/application/controllers/c_web.php[m
+[1m+++ b/application/controllers/c_web.php[m
+[36m@@ -263,7 +263,7 @@[m [mclass C_web extends CI_Controller {[m
+ 		$id = $ex[0];[m
+ 		$data = array([m
+ 						"title" => "Detail Blok ".$ex[1],[m
+[31m-						"blok" => $this->m_web->get_detail_blok($id)->row(),[m
+[32m+[m						[32m"blok" => $this->m_web->get_detail_blok($id)->row_array(),[m
+ 						"rumah" => $this->m_web->get_detail_rumah($id)[m
+ 					);[m
+ [m
+[36m@@ -273,16 +273,250 @@[m [mclass C_web extends CI_Controller {[m
+ 		$this->load->view('frontend/template/sidebar');[m
+ 		$this->load->view('frontend/template/footer');[m
+ 	}[m
+[31m-[m
+ 	// END[m
+ [m
+ 	/**[m
+[32m+[m	[32m * member control[m
+[32m+[m	[32m */[m
+[32m+[m
+[32m+[m	[32m# Registrasi[m
+[32m+[m	[32mpublic function register()[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$data = array([m
+[32m+[m						[32m"title" => "Registrasi",[m
+[32m+[m						[32m"id_konsumen" => $this->m_web->auto_number('konsumen', 'id_konsumen', 3, "KSM"),[m[41m [m
+[32m+[m						[32m"id_user" => $this->m_web->auto_number('user', 'id_user', 3, "USR")[m
+[32m+[m					[32m);[m
+[32m+[m
+[32m+[m		[32m//show time[m
+[32m+[m		[32m$this->load->view('frontend/template/header', $data);[m
+[32m+[m		[32m$this->load->view('frontend/member/register', $data);[m
+[32m+[m		[32m$this->load->view('frontend/template/sidebar');[m
+[32m+[m		[32m$this->load->view('frontend/template/footer');[m
+[32m+[m
+[32m+[m
+[32m+[m		[32mif (isset($_POST['register']))[m[41m [m
+[32m+[m		[32m{[m
+[32m+[m			[32m$id_user = $this->input->post('id_user');[m
+[32m+[m			[32m$id_konsumen = $this->input->post('id_konsumen');[m
+[32m+[m
+[32m+[m			[32m$record_user = array([m
+[32m+[m									[32m"id_user" => $id_user,[m
+[32m+[m									[32m"email" => $this->input->post('email'),[m
+[32m+[m									[32m"username" => $this->input->post('username'),[m
+[32m+[m									[32m"password" => md5($this->input->post('password')),[m
+[32m+[m									[32m"level" => "3",[m
+[32m+[m									[32m"tgl_register" => date('Y-m-d'),[m
+[32m+[m									[32m"keterangan" => "konsumen"[m
+[32m+[m[41m [m								[32m);[m[41m	[m
+[32m+[m
+[32m+[m			[32m$record_konsumen = array([m
+[32m+[m										[32m"id_konsumen" => $id_konsumen,[m
+[32m+[m										[32m"no_ktp" => $this->input->post('no_ktp'),[m
+[32m+[m										[32m"nama" => $this->input->post('nama'),[m
+[32m+[m										[32m"jk" => $this->input->post('jk'),[m
+[32m+[m										[32m"alamat" => $this->input->post('alamat'),[m
+[32m+[m										[32m"kota" => $this->input->post('kota'),[m
+[32m+[m										[32m"provinsi" => $this->input->post('provinsi'),[m
+[32m+[m										[32m"kode_pos" => $this->input->post('kode_pos'),[m
+[32m+[m										[32m"telp" => $this->input->post('telp'),[m
+[32m+[m										[32m"id_user" => $id_user[m
+[32m+[m									[32m);[m
+[32m+[m
+[32m+[m			[32m$this->m_web->insert_data('user', $record_user);[m
+[32m+[m			[32m$this->m_web->insert_data('konsumen', $record_konsumen);[m
+[32m+[m			[32mredirect('register-berhasil','refresh');[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic function register_success()[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$data = array([m
+[32m+[m						[32m"title" => "Registrasi Berhasil"[m
+[32m+[m					[32m);[m
+[32m+[m
+[32m+[m		[32m//show[m[41m [m
+[32m+[m		[32m$this->load->view('frontend/template/header', $data);[m
+[32m+[m		[32m$this->load->view('frontend/member/register_berhasil');[m
+[32m+[m		[32m$this->load->view('frontend/template/sidebar');[m
+[32m+[m		[32m$this->load->view('frontend/template/footer');[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32m#END[m
+[32m+[m
+[32m+[m	[32m#Profil User[m
+[32m+[m	[32mpublic function profil_user()[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->cek_login();[m
+[32m+[m
+[32m+[m		[32m$id  = $this->session->userdata('id_user');[m
+[32m+[m
+[32m+[m		[32m$data  = array([m
+[32m+[m						[32m"title" => "Profil Anda",[m
+[32m+[m						[32m"konsumen" => $this->m_web->get_id('konsumen', 'id_user', $id),[m
+[32m+[m						[32m"user" => $this->m_web->get_id('user', 'id_user', $id)[m
+[32m+[m					[32m);[m
+[32m+[m
+[32m+[m		[32m//show time[m
+[32m+[m		[32m$this->load->view('frontend/template/header', $data);[m
+[32m+[m		[32m$this->load->view('frontend/member/profil_user', $data);[m
+[32m+[m		[32m$this->load->view('frontend/template/sidebar');[m
+[32m+[m		[32m$this->load->view('frontend/template/footer');[m
+[32m+[m
+[32m+[m		[32mif (isset($_POST['edit_konsumen']))[m[41m [m
+[32m+[m		[32m{[m
+[32m+[m			[32m$record  = array([m
+[32m+[m								[32m"no_ktp" => $this->input->post('no_ktp'),[m
+[32m+[m								[32m"nama" => $this->input->post('nama'),[m
+[32m+[m								[32m"alamat" => $this->input->post('alamat'),[m
+[32m+[m								[32m"jk" => $this->input->post('jk'),[m
+[32m+[m								[32m"kota" => $this->input->post('kota'),[m
+[32m+[m								[32m"provinsi" => $this->input->post('provinsi'),[m
+[32m+[m								[32m"kode_pos" => $this->input->post('kode_pos'),[m
+[32m+[m								[32m"telp" => $this->input->post('telp')[m
+[32m+[m							[32m);[m
+[32m+[m			[32m$this->m_web->update_data('konsumen', $record, 'id_user', $id);[m
+[32m+[m			[32m$this->session->set_flashdata('alert-update', '<script>$(function(){swal("Berhasil", "Update Data Profil Berhasil", "success")})</script>');[m
+[32m+[m			[32mredirect('profil-anda','refresh');[m
+[32m+[m		[32m}[m
+[32m+[m		[32melseif (isset($_POST['edit_user']))[m[41m [m
+[32m+[m		[32m{[m
+[32m+[m			[32m$record_user  = array([m
+[32m+[m								[32m"email" => $this->input->post('email'),[m
+[32m+[m								[32m"username" => $this->input->post('username')[m
+[32m+[m							[32m);[m
+[32m+[m
+[32m+[m
+[32m+[m			[32m$this->m_web->update_data('user', $record_user, 'id_user', $id);[m
+[32m+[m			[32m$this->session->set_flashdata('alert-update', '<script>$(function(){swal("Berhasil", "Update Data User Berhasil", "success")})</script>');[m
+[32m+[m			[32mredirect('profil-anda','refresh');[m[41m		[m
+[32m+[m		[32m}[m
+[32m+[m		[32melseif (isset($_POST['ganti_password']))[m[41m [m
+[32m+[m		[32m{[m
+[32m+[m			[32m$record_password = array("password" => $this->input->post('password'));[m
+[32m+[m			[32m$this->m_web->update_data('user', $record_password, 'id_user', $id);[m
+[32m+[m			[32m$this->session->set_flashdata('alert-update', '<script>$(function(){swal("Berhasil", "Ganti Password Berhasil", "success")})</script>');[m
+[32m+[m			[32mredirect('profil-anda','refresh');[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}[m
+[32m+[m	[32m#END[m
+[32m+[m
+[32m+[m	[32m#Pemesanan[m
+[32m+[m	[32mpublic function pemesanan()[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$kd_rumah = $this->input->post('id');[m
+[32m+[m
+[32m+[m		[32m//record[m
+[32m+[m		[32m$record = array([m
+[32m+[m						[32m  "id_pemesanan" => $this->m_web->auto_number('pemesanan', 'id_pemesanan', 3, 'PMS'),[m
+[32m+[m						[32m  "kd_rumah" 	 => $kd_rumah,[m
+[32m+[m						[32m  "id_user" 	 => $this->session->userdata('id_user'),[m
+[32m+[m						[32m  "tgl_pemesanan" => date('Y-m-d'),[m
+[32m+[m						[32m  "status" => "belum dibayar"[m
+[32m+[m					[32m   );[m
+[32m+[m		[32m$this->m_web->insert_data('pemesanan', $record);[m
+[32m+[m		[32m$this->m_web->update_data('rumah', array('status' => 'dibooking'), 'kd_rumah', $kd_rumah);[m
+[32m+[m
+[32m+[m	[32m}[m
+[32m+[m[41m	[m
+[32m+[m	[32mpublic function pemesanan_success()[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->cek_login();[m
+[32m+[m		[32m$data  = array('title' => 'Pemesanan Sukses');[m
+[32m+[m
+[32m+[m		[32m//show time[m
+[32m+[m		[32m$this->load->view('frontend/template/header', $data);[m
+[32m+[m		[32m$this->load->view('frontend/member/pemesanan_sukses');[m
+[32m+[m		[32m$this->load->view('frontend/template/sidebar');[m
+[32m+[m		[32m$this->load->view('frontend/template/footer');[m
+[32m+[m	[32m}[m
+[32m+[m[41m	[m
+[32m+[m	[32mpublic function data_pemesanan()[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->cek_login();[m
+[32m+[m		[32m$data = array([m
+[32m+[m						[32m"title" => "Data Pemesanan Anda",[m
+[32m+[m						[32m"pemesanan" => $this->m_web->tampil_pemesanan($this->session->userdata('id_user'))[m
+[32m+[m
+[32m+[m					[32m);[m
+[32m+[m
+[32m+[m		[32m//showtime[m
+[32m+[m		[32m$this->load->view('frontend/template/header', $data);[m
+[32m+[m		[32m$this->load->view('frontend/member/data_pemesanan', $data);[m
+[32m+[m		[32m$this->load->view('frontend/template/sidebar');[m
+[32m+[m		[32m$this->load->view('frontend/template/footer');[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic function cara_bayar_update()[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->m_web->update_data('pemesanan', array('cara_bayar' => $this->input->post('cara')), 'id_user', $this->session->userdata('id_user'));[m
+[32m+[m[41m		[m
+[32m+[m		[32mecho $this->input->post('cara');[m
+[32m+[m	[32m}[m
+[32m+[m	[32m#END[m
+[32m+[m[41m	[m
+[32m+[m	[32m#pembayaran[m
+[32m+[m	[32mpublic function pembayaran()[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->cek_login();[m
+[32m+[m		[32m$id_pemesanan = $this->uri->segment(2);[m
+[32m+[m		[32m$data = array([m
+[32m+[m						[32m"title" => "Form Pembayaran",[m
+[32m+[m						[32m"id_pembayaran" => $this->m_web->auto_number('pembayaran', 'id_pembayaran', 3, 'PMB'),[m
+[32m+[m						[32m"id_pemesanan" => $id_pemesanan,[m
+[32m+[m						[32m"keterangan" => $this->m_web->get_periode($id_pemesanan)->row()[m
+[32m+[m					[32m);[m
+[32m+[m
+[32m+[m		[32m//show time[m
+[32m+[m		[32m$this->load->view('frontend/template/header', $data);[m
+[32m+[m		[32m$this->load->view('frontend/member/form_pembayaran', $data);[m
+[32m+[m		[32m$this->load->view('frontend/template/sidebar');[m
+[32m+[m		[32m$this->load->view('frontend/template/footer');[m
+[32m+[m
+[32m+[m		[32mif (isset($_POST['pembayaran']))[m[41m [m
+[32m+[m		[32m{[m
+[32m+[m			[32m$record = array([m
+[32m+[m							[32m  'id_pembayaran' => $this->input->post('id_pembayaran'),[m
+[32m+[m							[32m  'id_pemesanan' => $id_pemesanan,[m
+[32m+[m							[32m  'nama_bank' => $this->input->post('nama_bank'),[m
+[32m+[m							[32m  'no_rekening' => $this->input->post('no_rekening'),[m
+[32m+[m							[32m  'atas_nama' => $this->input->post('atas_nama'),[m
+[32m+[m							[32m  'tgl_pembayaran' => date('Y-m-d'),[m
+[32m+[m							[32m  'jml_pembayaran' => $this->input->post('jml_pembayaran'),[m
+[32m+[m							[32m  'keterangan' => $this->input->post('keterangan'),[m
+[32m+[m							[32m  'status' => "n"[m
+[32m+[m							[32m);[m
+[32m+[m
+[32m+[m			[32m$this->m_web->insert_data('pembayaran', $record);[m
+[32m+[m			[32m$this->m_web->update_data('pemesanan', array('status' => "sudah dibayar"), 'id_pemesanan', $id_pemesanan);[m
+[32m+[m			[32mredirect('pembayaran-sukses','refresh');[m
+[32m+[m		[32m}[m
+[32m+[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic function pembayaran_success()[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$data = array([m
+[32m+[m						[32m'title' => "Pembayaran Sukses",[m
+[32m+[m					[32m);[m
+[32m+[m
+[32m+[m		[32m//show time[m
+[32m+[m		[32m$this->load->view('frontend/template/header', $data);[m
+[32m+[m		[32m$this->load->view('frontend/member/pembayaran_sukses');[m
+[32m+[m		[32m$this->load->view('frontend/template/sidebar');[m
+[32m+[m		[32m$this->load->view('frontend/template/footer');[m
+[32m+[m
+[32m+[m	[32m}[m
+[32m+[m	[32m#END[m
+[32m+[m
+[32m+[m	[32m/**[m
+ 	 * Feature Section[m
+ 	 */[m
+ 	public function cek_login()[m
+ 	{[m
+ 		if ($this->session->userdata('login_member') == false) [m
+ 		{[m
+[32m+[m			[32m$this->session->set_flashdata('alert-login', '<script>$(function(){swal("Oopss!!", "Anda tidak dikenankan untuk mengakses halaman tersebut. Silahkan login terlebih dahulu", "error")})</script>');[m
+ 			redirect('home','refresh');[m
+ 		}[m
+ 	}[m
+[1mdiff --git a/application/libraries/idn_time.php b/application/libraries/idn_time.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/models/m_web.php b/application/models/m_web.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mindex dfaddba..68e9396[m
+[1m--- a/application/models/m_web.php[m
+[1m+++ b/application/models/m_web.php[m
+[36m@@ -39,7 +39,7 @@[m [mclass M_web extends CI_Model {[m
+ 		$this->db->from('blok_rumah');[m
+ 		$this->db->join('booking_fee', 'booking_fee.kd_booking = blok_rumah.kd_booking');[m
+ 		$this->db->join('spesifikasi', 'spesifikasi.kd_spesifikasi = blok_rumah.kd_spesifikasi');[m
+[31m-		$this->db->where('kd_blok', $id);[m
+[32m+[m		[32m$this->db->where('blok_rumah.kd_blok', $id);[m
+ 		return $this->db->get();[m
+ 	}[m
+ [m
+[36m@@ -47,7 +47,7 @@[m [mclass M_web extends CI_Model {[m
+ 	{[m
+ 		$this->db->where('kd_blok', $id);[m
+ 		$this->db->order_by('nama_kavling', 'asc');[m
+[31m-		return $this->db->get('rumah');[m
+[32m+[m		[32mreturn $this->db->get('rumah')->result();[m
+ 	}[m
+ [m
+ 	public function get_home_berita()[m
+[36m@@ -80,6 +80,136 @@[m [mclass M_web extends CI_Model {[m
+ 		$this->db->where($key, $value);[m
+ 		return $this->db->get($table);[m
+ 	}[m
+[32m+[m
+[32m+[m
+[32m+[m	[32m/**[m
+[32m+[m	[32m * Member Model[m
+[32m+[m	[32m */[m
+[32m+[m[41m	[m
+[32m+[m	[32m//Auth model[m
+[32m+[m	[32mpublic function auth($username, $password)[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->db->where('username', $username);[m
+[32m+[m		[32m$this->db->where('password', $password);[m
+[32m+[m		[32mreturn $this->db->get('user');[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32m// Basic Crud[m
+[32m+[m	[32mpublic function insert_data($table, $record)[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->db->insert($table, $record);[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic function update_data($table, $record, $key, $value)[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->db->where($key, $value);[m
+[32m+[m		[32m$this->db->update($table, $record);[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic function delete_data($table, $key, $value)[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->db->where($key, $value);[m
+[32m+[m		[32m$this->db->delete($table);[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic function auto_number($table, $kolom, $lebar=0, $awalan=null)[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->db->select($kolom);[m
+[32m+[m		[32m$this->db->limit(1);[m
+[32m+[m		[32m$this->db->order_by($kolom, 'desc');[m
+[32m+[m		[32m$this->db->from($table);[m
+[32m+[m		[32m$query = $this->db->get();[m
+[32m+[m
+[32m+[m		[32m$row = $query->result_array();[m
+[32m+[m		[32m$cek = $query->num_rows();[m
+[32m+[m
+[32m+[m		[32mif ($cek == 0)[m
+[32m+[m			[32m$nomor = 1;[m
+[32m+[m		[32melse[m
+[32m+[m		[32m{[m
+[32m+[m			[32m$nomor = intval(substr($row[0][$kolom], strlen($awalan)))+1;[m
+[32m+[m		[32m}[m
+[32m+[m
+[32m+[m			[32mif ($lebar > 0)[m
+[32m+[m			[32m{[m
+[32m+[m				[32m$result = $awalan.str_pad($nomor, $lebar, "0", STR_PAD_LEFT);[m
+[32m+[m			[32m}[m
+[32m+[m			[32melse[m
+[32m+[m			[32m{[m
+[32m+[m				[32m$result = $awalan.$nomor;[m
+[32m+[m			[32m}[m
+[32m+[m
+[32m+[m			[32mreturn $result;[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic function join_pesan($id)[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->db->select("*");[m
+[32m+[m		[32m$this->db->from("pesan");[m
+[32m+[m		[32m$this->db->join("user", "user.id_user = pesan.id_user");[m
+[32m+[m		[32m$this->db->where('pesan.kd_pesan', $id);[m
+[32m+[m		[32mreturn $this->db->get()->row();[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic function join_keluhan($id)[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->db->select("*");[m
+[32m+[m		[32m$this->db->from("keluhan");[m
+[32m+[m		[32m$this->db->join("user", "user.id_user = keluhan.id_user");[m
+[32m+[m		[32m$this->db->where('keluhan.kd_keluhan', $id);[m
+[32m+[m		[32mreturn $this->db->get()->row();[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic function get_by_parent($table, $id)[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->db->select('*');[m
+[32m+[m		[32m$this->db->from($table);[m
+[32m+[m		[32m$this->db->join("user", "user.id_user = ".$table.".id_user");[m
+[32m+[m		[32m$this->db->where($table.".parent", $id);[m
+[32m+[m		[32mreturn $this->db->get()->result();[m[41m	[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic function notif_pesan()[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->db->where('read', 'n');[m
+[32m+[m		[32mreturn $this->db->get('pesan')->num_rows();[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic function notif_keluhan()[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->db->where('read', 'n');[m
+[32m+[m		[32mreturn $this->db->get('keluhan')->num_rows();[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic function notif_balas_pesan($table, $id)[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->db->where('read', 'n');[m
+[32m+[m		[32m$this->db->where('parent', $id);[m
+[32m+[m		[32mreturn $this->db->get($table)->num_rows();[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic function tampil_pemesanan($id)[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->db->select('pemesanan.*, rumah.kd_blok, blok_rumah.nama_blok');[m
+[32m+[m		[32m$this->db->from('pemesanan');[m
+[32m+[m		[32m$this->db->join('rumah', 'rumah.kd_rumah = pemesanan.kd_rumah');[m
+[32m+[m		[32m$this->db->join('blok_rumah', 'blok_rumah.kd_blok = rumah.kd_blok');[m
+[32m+[m		[32m$this->db->where('id_user', $id);[m
+[32m+[m		[32mreturn $this->db->get()->result();[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic function get_periode($id)[m
+[32m+[m	[32m{[m
+[32m+[m		[32m$this->db->select('periode.*');[m
+[32m+[m		[32m$this->db->from('pemesanan');[m
+[32m+[m		[32m$this->db->join('rumah', 'rumah.kd_rumah = pemesanan.kd_rumah');[m
+[32m+[m		[32m$this->db->join('blok_rumah', 'blok_rumah.kd_blok = rumah.kd_blok');[m
+[32m+[m		[32m$this->db->join('booking_fee', 'booking_fee.kd_booking = blok_rumah.kd_booking');[m
+[32m+[m		[32m$this->db->join('periode', 'periode.kd_periode = booking_fee.kd_periode');[m
+[32m+[m		[32m$this->db->where('pemesanan.id_pemesanan', $id);[m
+[32m+[m		[32mreturn $this->db->get();[m
+[32m+[m	[32m}[m
+[32m+[m
+ }[m
+ [m
+ /* End of file  */[m
+[1mdiff --git a/application/third_party/dompdf/lib/fonts/Times-Bold.afm.php b/application/third_party/dompdf/lib/fonts/Times-Bold.afm.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/third_party/dompdf/lib/fonts/Times-Roman.afm.php b/application/third_party/dompdf/lib/fonts/Times-Roman.afm.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/third_party/dompdf/lib/fonts/log.htm b/application/third_party/dompdf/lib/fonts/log.htm[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/backend/keluhan/balas_keluhan.php b/application/views/backend/keluhan/balas_keluhan.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/backend/keluhan/index.php b/application/views/backend/keluhan/index.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/backend/pembayaran/detail_pemesanan.php b/application/views/backend/pembayaran/detail_pemesanan.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/backend/pembayaran/index.php b/application/views/backend/pembayaran/index.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/backend/pesan/balas_pesan.php b/application/views/backend/pesan/balas_pesan.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/backend/pesan/index.php b/application/views/backend/pesan/index.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/frontend/berita/detail.php b/application/views/frontend/berita/detail.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/frontend/berita/index.php b/application/views/frontend/berita/index.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/frontend/event/detail.php b/application/views/frontend/event/detail.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/frontend/event/index.php b/application/views/frontend/event/index.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/frontend/gallery/detail.php b/application/views/frontend/gallery/detail.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/frontend/gallery/index.php b/application/views/frontend/gallery/index.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mindex 2773bcc..8958e4a[m
+[1m--- a/application/views/frontend/gallery/index.php[m
+[1m+++ b/application/views/frontend/gallery/index.php[m
+[36m@@ -2,7 +2,7 @@[m
+ 	<div class="panel panel-default">[m
+ 		<div class="panel-body">[m
+ 			<?php foreach ($galeri as $g): ?>[m
+[31m-				<div class="col-md-4">[m
+[32m+[m				[32m<div class="col-md-3">[m
+ 					<img src="<?php echo base_url('img/galeri.jpg') ?>" class="img-thumbnail" alt="">[m
+ 					<div class="well well-sm" align="center">[m
+ 						<a href="<?php echo site_url('galeri-foto/'.$g->id_galeri."_".url_title($g->nama)) ?>"><?php echo $g->nama ?></a>[m
+[1mdiff --git a/application/views/frontend/home.php b/application/views/frontend/home.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mindex 19ed88f..bccf39f[m
+[1m--- a/application/views/frontend/home.php[m
+[1m+++ b/application/views/frontend/home.php[m
+[36m@@ -56,7 +56,7 @@[m
+ 							        		<label for="">Luas Tanah : </label> <?php echo $p->luas_tanah ?> m<sup>2</sup><br>	[m
+ 							        		<label for="">Harga : </label> Rp. <?php echo number_format($p->harga, 0, ".", "," ) ?>	[m
+ 							        	</p>[m
+[31m-							        	<p><a href="<?php echo site_url('produk/blok/'.$p->kd_blok.'_'.$p->nama_blok) ?>" class="btn btn-primary" role="button">Lihat Detail Rumah</a> [m
+[32m+[m							[41m        [m	[32m<p><a href="<?php echo site_url('produk-kami/blok/'.$p->kd_blok.'_'.$p->nama_blok) ?>" class="btn btn-primary" role="button">Lihat Detail Rumah</a>[m[41m [m
+ 									</div>[m
+ 								</div>[m
+ 					 		</div>[m
+[36m@@ -95,7 +95,7 @@[m
+ 					<div class="row">[m
+ 						<?php foreach ($galeri as $g): ?>[m
+ 							<div class="col-md-4">[m
+[31m-								<img src="<?php echo base_url('img/logo.png') ?>" class="img-thumbnail" alt="">[m
+[32m+[m								[32m<img src="<?php echo base_url('img/galeri.jpg') ?>" class="img-thumbnail" alt="">[m
+ 								<div class="well well-sm" align="center">[m
+ 									<a href="<?php echo site_url('galeri-foto/'.$g->id_galeri."_".url_title($g->nama)) ?>"><?php echo $g->nama ?></a>[m
+ 								</div>[m
+[36m@@ -106,4 +106,5 @@[m
+ 			</div>[m
+ 		</div>[m
+ 	</div>[m
+[31m-</div>[m
+\ No newline at end of file[m
+[32m+[m[32m</div>[m
+[32m+[m[32m<?php echo $this->session->flashdata('alert-login'); ?>[m
+\ No newline at end of file[m
+[1mdiff --git a/application/views/frontend/kontak.php b/application/views/frontend/kontak.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/frontend/produk/index.php b/application/views/frontend/produk/index.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mindex 78d986f..c9ed95a[m
+[1m--- a/application/views/frontend/produk/index.php[m
+[1m+++ b/application/views/frontend/produk/index.php[m
+[36m@@ -24,13 +24,21 @@[m
+ 									<img src="<?php echo base_url('img/rumah/'.$p->gambar) ?>" class="img-thumbnail img-responsive" alt="">[m
+ 								</div>[m
+ 								<div class="col-md-7">[m
+[31m-[m
+[32m+[m					[41m        [m		[32m<label for="">Luas Bangun : </label> <?php echo $p->luas_bangun ?> m<sup>2</sup><br>[m
+[32m+[m					[41m        [m		[32m<label for="">Luas Tanah : </label> <?php echo $p->luas_tanah ?> m<sup>2</sup><br>[m[41m	[m
+[32m+[m					[41m        [m		[32m<label for="">Muka : </label> <?php echo $p->muka ?> m<sup>2</sup><br>[m[41m	[m
+[32m+[m					[41m        [m		[32m<label for="">Panjang : </label> <?php echo $p->panjang ?> m<sup>2</sup><br>[m
+[32m+[m					[41m        [m		[32m<label for="">Sertifikat : </label> <?php echo $p->sertifikat ?> <br>[m[41m	[m
+[32m+[m					[41m        [m		[32m<label for="">Harga : </label> Rp. <?php echo number_format($p->harga, 0, ".", "," ) ?><br><br>[m
+[32m+[m					[41m        [m		[32m<a href="<?php echo site_url('produk-kami/blok/'.$p->kd_blok."_".$p->nama_blok) ?>">Lihat Data Rumah Blok <?php echo ucwords($p->nama_blok) ?></a>[m
+ 								</div>[m
+ 							</div>	[m
+ 							<hr>[m
+ 						<?php endforeach ?>[m
+ 					</div>[m
+[31m-					<div role="tabpanel" class="tab-pane" id="tab">...</div>[m
+[32m+[m					[32m<div role="tabpanel" class="tab-pane" id="tab">[m
+[32m+[m						[32m<img src="<?php echo base_url('img/site_plan.jpg') ?>" class="img-responsive" alt="Site Plan">[m
+[32m+[m					[32m</div>[m
+ 				</div>[m
+ 			</div>[m
+ 		</div>[m
+[1mdiff --git a/application/views/frontend/profil.php b/application/views/frontend/profil.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/frontend/template/footer.php b/application/views/frontend/template/footer.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/frontend/template/header.php b/application/views/frontend/template/header.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mindex 726f96d..01bab1b[m
+[1m--- a/application/views/frontend/template/header.php[m
+[1m+++ b/application/views/frontend/template/header.php[m
+[36m@@ -49,6 +49,16 @@[m
+ 	<script src="<?php echo base_url() ?>assets/bootstrap/js/bootstrap.min.js"></script>[m
+ </head>[m
+ <body>[m
+[32m+[m[32m<!-- Facebook Plugin -->[m
+[32m+[m[32m<div id="fb-root"></div>[m
+[32m+[m[32m<script>(function(d, s, id) {[m
+[32m+[m[32m  var js, fjs = d.getElementsByTagName(s)[0];[m
+[32m+[m[32m  if (d.getElementById(id)) return;[m
+[32m+[m[32m  js = d.createElement(s); js.id = id;[m
+[32m+[m[32m  js.src = "//connect.facebook.net/id_ID/sdk.js#xfbml=1&version=v2.6&appId=559696837515393";[m
+[32m+[m[32m  fjs.parentNode.insertBefore(js, fjs);[m
+[32m+[m[32m}(document, 'script', 'facebook-jssdk'));</script>[m
+[32m+[m
+ 	<div class="header">[m
+ 		<nav class="navbar navbar-inverse" role="navigation">[m
+ 			<div class="container-fluid">[m
+[1mdiff --git a/application/views/frontend/template/header_berita.php b/application/views/frontend/template/header_berita.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/frontend/template/header_profil.php b/application/views/frontend/template/header_profil.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/application/views/frontend/template/sidebar.php b/application/views/frontend/template/sidebar.php[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mindex 88f89b7..0d40f71[m
+[1m--- a/application/views/frontend/template/sidebar.php[m
+[1m+++ b/application/views/frontend/template/sidebar.php[m
+[36m@@ -3,7 +3,7 @@[m
+ 		if ($this->session->userdata('login_member') == true) [m
+ 		{[m
+ 		?>[m
+[31m-			<div class="panel panel-default">[m
+[32m+[m			[32m<div class="panel panel-primary">[m
+ 				<div class="panel-heading">[m
+ 					Menu Anda[m
+ 				</div>[m
+[36m@@ -14,7 +14,7 @@[m
+ 						<li><a href="<?php echo site_url('data-pembayaran') ?>">Data Pembayaran</a></li>[m
+ 						<li><a href="<?php echo site_url('pesan-anda') ?>">Pesan</a></li>[m
+ 						<li><a href="<?php echo site_url('keluhan-anda') ?>">Keluhan</a></li>[m
+[31m-						<li><a href="<?php echo site_url('logout') ?>">Logout</a></li>[m
+[32m+[m						[32m<li><a href="<?php echo site_url('logout-member') ?>">Logout</a></li>[m
+ 					</ul>[m
+ 				</div>[m
+ 			</div>[m
+[36m@@ -27,7 +27,7 @@[m
+ 					Login Panel[m
+ 				</div>[m
+ 				<div class="panel-body">[m
+[31m-					<form action="<?php echo site_url('login_member') ?>" name="f_login_member" method="POST">[m
+[32m+[m					[32m<form action="<?php echo site_url('login-member') ?>" name="f_login_member" method="POST">[m
+ 						<div class="form-group">[m
+ 							<input type="text" name="username" class="form-control" placeholder="Masukan Username">[m
+ 						</div>[m
+[1mdiff --git a/img/background.jpg b/img/background.jpg[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/img/galeri.jpg b/img/galeri.jpg[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/img/kerjasama/btnproperti.png b/img/kerjasama/btnproperti.png[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/img/kerjasama/kpr_bca.jpg b/img/kerjasama/kpr_bca.jpg[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/img/kerjasama/kpr_bri.png b/img/kerjasama/kpr_bri.png[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/img/rumah/denah_1.JPG b/img/rumah/denah_1.JPG[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/img/rumah/type_36.jpg b/img/rumah/type_36.jpg[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
