@@ -26,7 +26,7 @@ class C_web extends CI_Controller {
 	}
 
 	/**
-	 * Profil Kami 
+	 * Profil Kami
 	 */
 	public function profil()
 	{
@@ -77,9 +77,9 @@ class C_web extends CI_Controller {
 		$config['cur_tag_close'] = '</a></li>';
 		$config['num_tag_open'] = '<li>';
 		$config['num_tag_close'] = '</li>';
-		
+
 		$this->pagination->initialize($config);
-		
+
 		$data['page'] =  $this->pagination->create_links();
 
 		//show time
@@ -144,16 +144,16 @@ class C_web extends CI_Controller {
 		$config['cur_tag_close'] = '</a></li>';
 		$config['num_tag_open'] = '<li>';
 		$config['num_tag_close'] = '</li>';
-		
+
 		$this->pagination->initialize($config);
-		
+
 		$data['page'] =  $this->pagination->create_links();
 
 		//show time
 		$this->load->view('frontend/template/header', $data);
 		$this->load->view('frontend/event/index', $data);
 		$this->load->view('frontend/template/sidebar');
-		$this->load->view('frontend/template/footer');	
+		$this->load->view('frontend/template/footer');
 	}
 
 	public function detail_event()
@@ -223,7 +223,7 @@ class C_web extends CI_Controller {
 	//end
 
 	/**
-	 * Page Kontak 
+	 * Page Kontak
 	 */
 
 	public function kontak()
@@ -239,7 +239,7 @@ class C_web extends CI_Controller {
 
 
 	/**
-	 * Page List Rumah 
+	 * Page List Rumah
 	 */
 
 	public function produk_kami()
@@ -248,7 +248,7 @@ class C_web extends CI_Controller {
 						"title" => "Produk Kami",
 						"produk" => $this->m_web->get_home_produk()
 					);
-		
+
 		//show time
 		$this->load->view('frontend/template/header', $data);
 		$this->load->view('frontend/produk/index', $data);
@@ -284,7 +284,7 @@ class C_web extends CI_Controller {
 	{
 		$data = array(
 						"title" => "Registrasi",
-						"id_konsumen" => $this->m_web->auto_number('konsumen', 'id_konsumen', 3, "KSM"), 
+						"id_konsumen" => $this->m_web->auto_number('konsumen', 'id_konsumen', 3, "KSM"),
 						"id_user" => $this->m_web->auto_number('user', 'id_user', 3, "USR")
 					);
 
@@ -295,7 +295,7 @@ class C_web extends CI_Controller {
 		$this->load->view('frontend/template/footer');
 
 
-		if (isset($_POST['register'])) 
+		if (isset($_POST['register']))
 		{
 			$id_user = $this->input->post('id_user');
 			$id_konsumen = $this->input->post('id_konsumen');
@@ -308,7 +308,7 @@ class C_web extends CI_Controller {
 									"level" => "3",
 									"tgl_register" => date('Y-m-d'),
 									"keterangan" => "konsumen"
- 								);	
+ 								);
 
 			$record_konsumen = array(
 										"id_konsumen" => $id_konsumen,
@@ -335,7 +335,7 @@ class C_web extends CI_Controller {
 						"title" => "Registrasi Berhasil"
 					);
 
-		//show 
+		//show
 		$this->load->view('frontend/template/header', $data);
 		$this->load->view('frontend/member/register_berhasil');
 		$this->load->view('frontend/template/sidebar');
@@ -363,7 +363,7 @@ class C_web extends CI_Controller {
 		$this->load->view('frontend/template/sidebar');
 		$this->load->view('frontend/template/footer');
 
-		if (isset($_POST['edit_konsumen'])) 
+		if (isset($_POST['edit_konsumen']))
 		{
 			$record  = array(
 								"no_ktp" => $this->input->post('no_ktp'),
@@ -379,7 +379,7 @@ class C_web extends CI_Controller {
 			$this->session->set_flashdata('alert-update', '<script>$(function(){swal("Berhasil", "Update Data Profil Berhasil", "success")})</script>');
 			redirect('profil-anda','refresh');
 		}
-		elseif (isset($_POST['edit_user'])) 
+		elseif (isset($_POST['edit_user']))
 		{
 			$record_user  = array(
 								"email" => $this->input->post('email'),
@@ -389,9 +389,9 @@ class C_web extends CI_Controller {
 
 			$this->m_web->update_data('user', $record_user, 'id_user', $id);
 			$this->session->set_flashdata('alert-update', '<script>$(function(){swal("Berhasil", "Update Data User Berhasil", "success")})</script>');
-			redirect('profil-anda','refresh');		
+			redirect('profil-anda','refresh');
 		}
-		elseif (isset($_POST['ganti_password'])) 
+		elseif (isset($_POST['ganti_password']))
 		{
 			$record_password = array("password" => $this->input->post('password'));
 			$this->m_web->update_data('user', $record_password, 'id_user', $id);
@@ -418,7 +418,7 @@ class C_web extends CI_Controller {
 		$this->m_web->update_data('rumah', array('status' => 'dibooking'), 'kd_rumah', $kd_rumah);
 
 	}
-	
+
 	public function pemesanan_success()
 	{
 		$this->cek_login();
@@ -430,7 +430,7 @@ class C_web extends CI_Controller {
 		$this->load->view('frontend/template/sidebar');
 		$this->load->view('frontend/template/footer');
 	}
-	
+
 	public function data_pemesanan()
 	{
 		$this->cek_login();
@@ -450,11 +450,11 @@ class C_web extends CI_Controller {
 	public function cara_bayar_update()
 	{
 		$this->m_web->update_data('pemesanan', array('cara_bayar' => $this->input->post('cara')), 'id_user', $this->session->userdata('id_user'));
-		
+
 		echo $this->input->post('cara');
 	}
 	#END
-	
+
 	#pembayaran
 	public function pembayaran()
 	{
@@ -473,7 +473,7 @@ class C_web extends CI_Controller {
 		$this->load->view('frontend/template/sidebar');
 		$this->load->view('frontend/template/footer');
 
-		if (isset($_POST['pembayaran'])) 
+		if (isset($_POST['pembayaran']))
 		{
 			$record = array(
 							  'id_pembayaran' => $this->input->post('id_pembayaran'),
@@ -496,6 +496,7 @@ class C_web extends CI_Controller {
 
 	public function pembayaran_success()
 	{
+		$this->cek_login();
 		$data = array(
 						'title' => "Pembayaran Sukses",
 					);
@@ -507,14 +508,238 @@ class C_web extends CI_Controller {
 		$this->load->view('frontend/template/footer');
 
 	}
+
+	public function data_pembayaran()
+	{
+		$this->cek_login();
+		$data = array(
+						"title" => "Data Pembayaran",
+						"pembayaran" => $this->m_web->get_pembayaran($this->session->userdata('id_user'))->result()
+					);
+
+		//show time
+		$this->load->view('frontend/template/header', $data);
+		$this->load->view('frontend/member/data_pembayaran', $data);
+		$this->load->view('frontend/template/sidebar');
+		$this->load->view('frontend/template/footer');
+	}
 	#END
+
+	# Pesan dan Keliuhan
+	public function pesan()
+	{
+		$this->cek_login();
+		$data = array(
+						"title" => "Pesan Anda",
+						"pesan" => $this->m_web->get_pesan($this->session->userdata('id_user'))->result()
+					);
+		//show time 
+		$this->load->view('frontend/template/header', $data);
+		$this->load->view('frontend/member/pesan', $data);
+		$this->load->view('frontend/template/sidebar');
+		$this->load->view('frontend/template/footer');
+	}
+
+	public function kirim_pesan()
+	{
+		$this->cek_login();
+		$data = array(
+						"title" => "Kirim Pesan",
+						"kd_pesan" => $this->m_web->auto_number('pesan', 'kd_pesan', 3, 'PSN')
+					);
+
+		//show time
+		$this->load->view('frontend/template/header', $data);
+		$this->load->view('frontend/member/kirim_pesan', $data);
+		$this->load->view('frontend/template/sidebar');
+		$this->load->view('frontend/template/footer');
+	
+		if (isset($_POST['kirim'])) 
+		{
+			$record = array(
+								"kd_pesan" => $this->input->post('kd_pesan'),
+								"id_user" => $this->session->userdata('id_user'),
+								"pesan" => $this->input->post('pesan'),
+								"tgl_pesan" => date('Y-m-d H:i:s'),
+								"parent" => "0",
+								"read" => 'n'
+							);
+			
+			$this->m_web->insert_data('pesan', $record);
+			$this->session->set_flashdata('kirim-sukses', '<script>$(function(){swal("Berhasil", "Pesan Berhasil di Kirim. Untuk mengecek balasan, klik tombol detail pesan", "success")})</script>');
+			redirect('pesan-anda','refresh');
+		}
+	}
+
+	public function lihat_pesan()
+	{
+		$this->cek_login();
+		$id = $this->uri->segment(2);
+
+		$data = array(
+						"title" => "Lihat Pesan",
+						"data_parent" => $this->m_web->get_parent('pesan', 'pesan.kd_pesan', $id)->row(),
+						"balas"  => $this->m_web->get_detail_pesan($id)->result() ,
+						"kd_pesan" => $this->m_web->auto_number('pesan', 'kd_pesan', 3, 'PSN')
+					 );
+
+		//show time
+		$this->load->view('frontend/template/header', $data);
+		$this->load->view('frontend/member/lihat_pesan', $data);
+		$this->load->view('frontend/template/sidebar');
+		$this->load->view('frontend/template/footer');
+
+		if (isset($_POST['balas'])) 
+		{
+			$record = array(
+								"kd_pesan" => $this->m_web->auto_number('pesan', 'kd_pesan', 3, 'PSN'),
+								"pesan" => $this->input->post('pesan'),
+								"tgl_pesan" => date('Y-m-d H:i:s'),
+								"id_user" => $this->session->userdata('id_user'),
+								"parent" => $id,
+								"read" => 'n'
+							);
+
+			$this->m_web->insert_data('pesan', $record);
+			$this->session->set_flashdata('balas-sukses', '<script>$(function(){swal("Berhasil", "Balas Pesan berhasil", "success")})</script>');
+			redirect('lihat-pesan/'.$id,'refresh');
+		}
+	}
+
+	public function keluhan()
+	{
+		$this->cek_login();
+		$data = array(
+						"title" => "Keluhan",
+						"keluhan" => $this->m_web->get_keluhan($this->session->userdata('id_user'))->result()
+					);
+		//show time 
+		$this->load->view('frontend/template/header', $data);
+		$this->load->view('frontend/member/keluhan', $data);
+		$this->load->view('frontend/template/sidebar');
+		$this->load->view('frontend/template/footer');
+	}
+
+	public function kirim_keluhan()
+	{
+		$this->cek_login();
+		$data = array(
+						"title" => "Kirim Keluhan",
+						"kd_keluhan" => $this->m_web->auto_number('keluhan', 'kd_keluhan', 3, 'KLH')
+					);
+
+		//show time
+		$this->load->view('frontend/template/header', $data);
+		$this->load->view('frontend/member/kirim_keluhan', $data);
+		$this->load->view('frontend/template/sidebar');
+		$this->load->view('frontend/template/footer');
+	
+		if (isset($_POST['kirim'])) 
+		{
+			$record = array(
+								"kd_keluhan" => $this->input->post('kd_keluhan'),
+								"id_user" => $this->session->userdata('id_user'),
+								"nama_keluhan" => $this->input->post('nama_keluhan'),
+								"keluhan" => $this->input->post('keluhan'),
+								"tgl_keluhan" => date('Y-m-d H:i:s'),
+								"parent" => "0",
+								"read" => 'n',
+								"status" => ''
+							);
+			
+			$this->m_web->insert_data('keluhan', $record);
+			$this->session->set_flashdata('kirim-sukses', '<script>$(function(){swal("Berhasil", "Keluhan Berhasil di Kirim. Untuk mengecek balasan, klik tombol detail pesan", "success")})</script>');
+			redirect('keluhan-anda','refresh');
+		}
+	}
+
+	public function lihat_keluhan()
+	{
+		$this->cek_login();
+		$id = $this->uri->segment(2);
+
+		$data = array(
+						"title" => "Lihat Keluhan",
+						"data_parent" => $this->m_web->get_parent('keluhan', 'kd_keluhan',$id)->row(),
+						"data"  => $this->m_web->get_detail_keluhan($id)->result(),
+						"kd_keluhan" => $this->m_web->auto_number('keluhan', 'kd_keluhan', 3, 'KLH') 
+					 );
+
+		//show time
+		$this->load->view('frontend/template/header', $data);
+		$this->load->view('frontend/member/lihat_keluhan', $data);
+		$this->load->view('frontend/template/sidebar');
+		$this->load->view('frontend/template/footer');
+
+		if (isset($_POST['balas'])) 
+		{
+			$record = array(
+								"kd_keluhan" => $this->m_web->auto_number('keluhan', 'kd_keluhan', 3, 'KLH'),
+								"keluhan" => $this->input->post('keluhan'),
+								"tgl_keluhan" => date('Y-m-d H:i:s'),
+								"id_user" => $this->session->userdata('id_user'),
+								"parent" => $id,
+								"read" => 'n'
+							);
+
+			$this->m_web->insert_data('keluhan', $record);
+			$this->session->set_flashdata('balas-sukses', '<script>$(function(){swal("Berhasil", "Balas Keluhan berhasil", "success")})</script>');
+			redirect('lihat-keluhan/'.$id,'refresh');
+		}
+
+	}	
+
+	/**
+	 * Cetak
+	 */
+
+	public function cetak_kwitansi()
+	{
+		$this->cek_login();
+		$id  = $this->uri->segment(2);
+
+		$data = array(
+						"title" => "Cetak Kwitansi",
+						"kwitansi" => $this->m_web->get_nama($id)->row(),
+						"nominal" => $this->m_web->get_id('pembayaran', 'id_pemesanan', $id)
+					);
+		$this->load->view('frontend/member/cetak_kwitansi', $data);
+
+		$html = $this->output->get_output();
+
+		//create pdf
+		$this->cetak->load_html($html);
+		$this->cetak->set_paper('A4', 'potrait');
+		$this->cetak->render();
+		$this->cetak->stream('cetak_kwitansi.pdf', array('Attachment'=>0));
+	}
+
+	public function cetak_spr()
+	{
+		$this->cek_login();
+		$id  = $this->uri->segment(2);
+
+		$data = array(
+						"title" => "Cetak SPR",
+						"spr" => $this->m_web->lihat_spr($id)->row()
+					);
+		$this->load->view('frontend/member/cetak_spr', $data);
+
+		$html = $this->output->get_output();
+
+		//create pdf
+		$this->cetak->load_html($html);
+		$this->cetak->set_paper('letter', 'potrait');
+		$this->cetak->render();
+		$this->cetak->stream('cetak_SPR_'.$id.'.pdf', array('Attachment'=>0));
+	}
 
 	/**
 	 * Feature Section
 	 */
 	public function cek_login()
 	{
-		if ($this->session->userdata('login_member') == false) 
+		if ($this->session->userdata('login_member') == false)
 		{
 			$this->session->set_flashdata('alert-login', '<script>$(function(){swal("Oopss!!", "Anda tidak dikenankan untuk mengakses halaman tersebut. Silahkan login terlebih dahulu", "error")})</script>');
 			redirect('home','refresh');

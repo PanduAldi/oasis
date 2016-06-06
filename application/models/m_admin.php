@@ -180,6 +180,39 @@ class M_admin extends CI_Model {
 
 			return $result;
 	}
+
+	public function lihat_spr($id)
+	{
+		$this->db->select('konsumen.nama, konsumen.no_ktp, konsumen.alamat, konsumen.telp, blok_rumah.harga, pembayaran.jml_pembayaran, pemesanan.cara_bayar, pembayaran.tgl_pembayaran, rumah.nama_kavling, blok_rumah.luas_bangun, blok_rumah.luas_tanah, pembayaran.keterangan');
+		$this->db->from('pembayaran');
+		$this->db->join('pemesanan', 'pemesanan.id_pemesanan = pembayaran.id_pemesanan');
+		$this->db->join('user', 'user.id_user = pemesanan.id_user');
+		$this->db->join('konsumen', 'konsumen.id_user = user.id_user');
+		$this->db->join('rumah', 'rumah.kd_rumah = pemesanan.kd_rumah');
+		$this->db->join('blok_rumah', 'blok_rumah.kd_blok = rumah.kd_blok');
+		$this->db->where('pembayaran.id_pembayaran', $id);
+		return $this->db->get();
+	}
+
+	public function get_lap_pemesanan($tgl1, $tgl2)
+	{
+		$this->db->select("konsumen.nama, rumah.nama_kavling, blok_rumah.luas_bangun, blok_rumah.luas_tanah, pemesanan.tgl_pemesanan");
+		$this->db->from('pemesanan');
+		$this->db->join('user', 'user.id_user = pemesanan.id_user');
+		$this->db->join('rumah', 'rumah.kd_rumah = pemesanan.kd_rumah');
+		$this->db->join('konsumen', 'konsumen.id_user = user.id_user');
+		$this->db->join('blok_rumah', 'blok_rumah.kd_blok = rumah.kd_blok');
+		$this->db->where('pemesanan.tgl_pemesanan >=', $tgl1);
+		$this->db->where('pemesanan.tgl_pemesanan <=', $tgl2);
+		return $this->db->get();
+	}
+
+	public function get_lap_konsumen($tgl1, $tgl2)
+	{
+		$this->db->join('user', 'user.id_user = konsumen.id_user');
+		$this->db->where('user.tgl_register >=', $tgl1);
+		$this->db->where('user.tgl_register <=', $tgl2);
+	}
 }
 
 /* End of file m_admin.php */

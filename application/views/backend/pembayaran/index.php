@@ -27,8 +27,8 @@
 						<?php  
 							if ($pem->status == "y") 
 							{
-								echo anchor_popup('pembayaran/lihat_spr/'.$pem->id_pembayaran, 'Lihat SPR', 0)."<br>";
-								echo anchor_popup('pembayaran/kwitansi/'.$pem->id_pembayaran, 'Lihat Kwitansi', 0);
+								echo anchor_popup('lihat-spr/'.$pem->id_pembayaran, 'Lihat SPR', 0)."<br>";
+								echo anchor_popup('lihat-kwitansi/'.$pem->id_pemesanan, 'Lihat Kwitansi', 0);
 							}
 							else
 							{

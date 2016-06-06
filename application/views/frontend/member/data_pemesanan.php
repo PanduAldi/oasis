@@ -45,7 +45,14 @@
 									}
 									elseif ($p->status == "sudah dibayar") 
 									{
-										echo '<a href="'.site_url('cetak-kwitansi/'.$p->id_pemesanan).'" class="btn btn-primary"><i class="fa fa-file-text-o"></i> Lihat Kwitansi</a>';
+										echo anchor_popup('cetak-kwitansi/'.$p->id_pemesanan, '<i class="fa fa-file-text-o"></i> Lihat Kwitansi', array("width"=>"900","height"=>"900",'class'=> "btn btn-primary",'screenx'=>"250", "screeny"=>"50"));
+										?>
+										<script>
+											$(function(){
+												$("#cara_bayar").attr('disabled', 'disabled');
+											})
+										</script>
+										<?php
 									}
 									else
 									{
