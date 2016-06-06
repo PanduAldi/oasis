@@ -1288,7 +1288,7 @@ class C_admin extends CI_Controller {
 			
 		$get_pembayaran = $this->m_admin->get_id('pembayaran', 'id_pembayaran', $id)->row();
 
-		$get_rumah  = $this->m_admin->get_id('pemesanan', 'id_pemesanan', $get_pembayaran->id_pemesanan);
+		$get_rumah  = $this->m_admin->get_id('pemesanan', 'id_pemesanan', $get_pembayaran->id_pemesanan)->row();
 
 		$this->m_admin->update_data('pembayaran', array('status' => 'y'), 'id_pembayaran', $id);
 		$this->m_admin->update_data('rumah', array('status' => 'dipesan'), 'kd_rumah', $get_rumah->kd_rumah);
@@ -1306,7 +1306,42 @@ class C_admin extends CI_Controller {
 
 	public function lihat_spr()
 	{
+		$id  = $this->uri->segment(2);
 
+		$data = array(
+						"title" => "Cetak SPR",
+						"spr" => $this->m_admin->lihat_spr($id)->row()
+					);
+		$this->load->view('frontend/member/cetak_spr', $data);
+
+		$html = $this->output->get_output();
+
+		//create pdf
+		$this->cetak->load_html($html);
+		$this->cetak->set_paper('letter', 'potrait');
+		$this->cetak->render();
+		$this->cetak->stream('cetak_SPR_'.$id.'.pdf', array('Attachment'=>0));
+	}
+
+	public function lihat_kwitansi()
+	{
+		$id  = $this->uri->segment(2);
+
+		$this->load->model('m_web');
+		$data = array(
+						"title" => "Cetak Kwitansi",
+						"kwitansi" => $this->m_web->get_nama($id)->row(),
+						"nominal" => $this->m_web->get_id('pembayaran', 'id_pemesanan', $id)
+					);
+		$this->load->view('frontend/member/cetak_kwitansi', $data);
+
+		$html = $this->output->get_output();
+
+		//create pdf
+		$this->cetak->load_html($html);
+		$this->cetak->set_paper('A4', 'potrait');
+		$this->cetak->render();
+		$this->cetak->stream('cetak_kwitansi.pdf', array('Attachment'=>0));
 	}
 	// End
 
@@ -1470,6 +1505,41 @@ class C_admin extends CI_Controller {
 	}
 	// End
 	
+
+	/**
+	 * Laporan
+	 */
+
+	public function lap_pemesanan()
+	{
+		$data['title'] = "Laporan Data Konsumen";
+
+		$this->admin_template->display('backend/laporan/lap_pemesanan', $data);
+	}
+
+	public function load_pemesanan()
+	{
+		$tgl1 = $this->input->post('tgl1');
+		$tgl2 = $this->input->post('tgl2');
+
+		$data['laporan'] = $this->m_admin->get_lap_pemesanan($tgl1, $tgl2)->result();
+
+		$this->load->view('backend/laporan/load_pemesanan');
+	}
+
+	public function lap_konsumen()
+	{
+		$data['title'] = "Laporan Data Konsumen";
+
+		$this->admin_template->display('backend/laporan/lap_konsumen', $data);
+	}
+
+	public function load_konsumen()
+	{
+		$data['laporan'] = $this->m_admin->get_lap_konsumen($this->input->post('tgl1'), $this->input->post('tgl'))->result();
+		
+		$this->load->view('backend/laporan/load_konsumen');
+	}
 
 	/**
 	 * Feature option

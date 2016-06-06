@@ -3,7 +3,7 @@
 class M_web extends CI_Model {
 
 	public function get_all($table, $limit, $offset, $by)
-	{	
+	{
 		$this->db->order_by($by, 'desc');
 		return $this->db->get($table, $limit, $offset);
 	}
@@ -85,7 +85,7 @@ class M_web extends CI_Model {
 	/**
 	 * Member Model
 	 */
-	
+
 	//Auth model
 	public function auth($username, $password)
 	{
@@ -166,7 +166,7 @@ class M_web extends CI_Model {
 		$this->db->from($table);
 		$this->db->join("user", "user.id_user = ".$table.".id_user");
 		$this->db->where($table.".parent", $id);
-		return $this->db->get()->result();	
+		return $this->db->get()->result();
 	}
 
 	public function notif_pesan()
@@ -198,6 +198,15 @@ class M_web extends CI_Model {
 		return $this->db->get()->result();
 	}
 
+	public function get_pembayaran($id)
+	{
+		$this->db->select("pembayaran.*");
+		$this->db->from('pembayaran');
+		$this->db->join('pemesanan', "pemesanan.id_pemesanan = pembayaran.id_pemesanan");
+		$this->db->where('pemesanan.id_user', $id);
+		return $this->db->get();
+	}
+
 	public function get_periode($id)
 	{
 		$this->db->select('periode.*');
@@ -209,6 +218,68 @@ class M_web extends CI_Model {
 		$this->db->where('pemesanan.id_pemesanan', $id);
 		return $this->db->get();
 	}
+
+	public function get_nama($id)
+	{
+		$this->db->select('konsumen.nama');
+		$this->db->from('pemesanan');
+		$this->db->join('user', "user.id_user = pemesanan.id_user");
+		$this->db->join('konsumen', 'konsumen.id_user = user.id_user');
+		$this->db->where('pemesanan.id_pemesanan', $id);
+		return $this->db->get();
+	}
+
+	public function lihat_spr($id)
+	{
+		$this->db->select('konsumen.nama, konsumen.no_ktp, konsumen.alamat, konsumen.telp, blok_rumah.harga, pembayaran.jml_pembayaran, pemesanan.cara_bayar, pembayaran.tgl_pembayaran, rumah.nama_kavling, blok_rumah.luas_bangun, blok_rumah.luas_tanah, pembayaran.keterangan');
+		$this->db->from('pembayaran');
+		$this->db->join('pemesanan', 'pemesanan.id_pemesanan = pembayaran.id_pemesanan');
+		$this->db->join('user', 'user.id_user = pemesanan.id_user');
+		$this->db->join('konsumen', 'konsumen.id_user = user.id_user');
+		$this->db->join('rumah', 'rumah.kd_rumah = pemesanan.kd_rumah');
+		$this->db->join('blok_rumah', 'blok_rumah.kd_blok = rumah.kd_blok');
+		$this->db->where('pembayaran.id_pembayaran', $id);
+		return $this->db->get();
+	}
+
+	public function get_pesan($id)
+	{
+		$this->db->where('parent', '0');
+		$this->db->where('id_user', $id);
+		return $this->db->get('pesan');
+	}
+
+	public function get_keluhan($id)
+	{
+		$this->db->where('parent', '0');
+		$this->db->where('id_user', $id);
+		return $this->db->get('keluhan');
+	}
+
+	public function get_detail_pesan($id)
+	{
+		$this->db->join('user', 'user.id_user = pesan.id_user');
+		$this->db->where('pesan.parent', $id);
+		return $this->db->get('pesan');
+	}
+
+	public function get_detail_keluhan($id)
+	{
+		$this->db->join('user', 'user.id_user = keluhan.id_user');
+		$this->db->where('parent', $id);
+		return $this->db->get('keluhan');
+	}
+
+	public function get_parent($table, $key, $value)
+	{
+		$this->db->select('*');
+		$this->db->from($table);
+		$this->db->join('user', 'user.id_user ='.$table.'.id_user');
+		$this->db->where($key, $value);
+		return $this->db->get();
+	}
+
+	
 
 }
 

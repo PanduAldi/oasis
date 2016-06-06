@@ -138,7 +138,12 @@ $route['404_override'] = '';
 	$route['keluhan/hapus'] 				= "c_admin/hapus_keluhan";
 	$route['keluhan/balas/hapus'] 			= "c_admin/hapus_balas_keluhan";
 	$route['keluhan/update_status'] 		= "c_admin/status_keluhan";
-
+	$route['lihat-spr/(:any)'] 				= "c_admin/lihat_spr";
+	$route['lihat-kwitansi/(:any)'] 		= "c_admin/lihat_kwitansi";
+	$route['laporan-pemesanan']  			= "c_admin/lap_pemesanan";
+	$route['laporan-pemesanan/data'] 		= "c_admin/load_pemesanan";
+	$route['laporan-konsumen']				= "c_admin/lap_konsumen";
+	$route['laporan-konsumen/data'] 		= "c_admin/load_konsumen";
 
 /** End of Backend routes */
 
@@ -176,11 +181,11 @@ $route['404_override'] = '';
 	$route['cetak-kwitansi/(:any)'] 	= "c_web/cetak_kwitansi";
 	$route['cetak-spr/(:any)'] 			= "c_web/cetak_spr"; 	
 	$route['pesan-anda'] 				= "c_web/pesan";
-	$route['pesan-anda/kirim-pesan']	= "c_web/kirim_pesan";
-	$route['pesan-anda/lihat/(:any)'] 	= "c_web/balas_pesan";	
+	$route['kirim-pesan']				= "c_web/kirim_pesan";
+	$route['lihat-pesan/(:any)'] 		= "c_web/lihat_pesan";	
 	$route['keluhan-anda'] 				= "c_web/keluhan";
-	$route['keluhan-anda/lihat/(:any)'] = "c_web/balas_keluhan";
-	$route['keluhan-anda/kirim-keluhan']= "c_web/kirim_keluhan";
+	$route['lihat-keluhan/(:any)'] 		= "c_web/lihat_keluhan";
+	$route['kirim-keluhan'] 			= "c_web/kirim_keluhan";
 
 /** End of Frontend routes */
 

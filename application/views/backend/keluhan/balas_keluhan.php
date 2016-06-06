@@ -40,7 +40,7 @@
 <hr>
 <div class="balas">
 	<form action="" method="POST" id="f_balas_pesan">
-		<input type="hidden" name="kd_pesan" value="<?php echo $kd_keluhan?>">
+		<input type="hidden" name="kd_keluhan" value="<?php echo $kd_keluhan?>">
 		<div class="form-group">
 			<label for="" class="control-label">Tulis Balasan : </label>
 			<textarea name="keluhan" id="pesan" class="form-control" cols="30" rows="10"></textarea>
