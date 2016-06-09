@@ -196,7 +196,7 @@ class M_admin extends CI_Model {
 
 	public function get_lap_pemesanan($tgl1, $tgl2)
 	{
-		$this->db->select("konsumen.nama, rumah.nama_kavling, blok_rumah.luas_bangun, blok_rumah.luas_tanah, pemesanan.tgl_pemesanan");
+		$this->db->select("konsumen.nama, rumah.nama_kavling, blok_rumah.luas_bangun, blok_rumah.luas_tanah, pemesanan.tgl_pemesanan, pemesanan.status");
 		$this->db->from('pemesanan');
 		$this->db->join('user', 'user.id_user = pemesanan.id_user');
 		$this->db->join('rumah', 'rumah.kd_rumah = pemesanan.kd_rumah');
@@ -212,6 +212,7 @@ class M_admin extends CI_Model {
 		$this->db->join('user', 'user.id_user = konsumen.id_user');
 		$this->db->where('user.tgl_register >=', $tgl1);
 		$this->db->where('user.tgl_register <=', $tgl2);
+		return $this->db->get('konsumen');
 	}
 }
 
