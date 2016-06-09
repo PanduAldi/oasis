@@ -142,8 +142,10 @@ $route['404_override'] = '';
 	$route['lihat-kwitansi/(:any)'] 		= "c_admin/lihat_kwitansi";
 	$route['laporan-pemesanan']  			= "c_admin/lap_pemesanan";
 	$route['laporan-pemesanan/data'] 		= "c_admin/load_pemesanan";
+	$route['cetak-laporan-pemesanan/(:any)'] = "c_admin/cetak_lap_pemesanan";
 	$route['laporan-konsumen']				= "c_admin/lap_konsumen";
 	$route['laporan-konsumen/data'] 		= "c_admin/load_konsumen";
+	$route['cetak-laporan-konsumen/(:any)']	= "c_admin/cetak_lap_konsumen";
 
 /** End of Backend routes */
 

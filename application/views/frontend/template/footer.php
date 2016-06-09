@@ -34,6 +34,9 @@
 	<script src="<?php echo base_url() ?>assets/datatables/dataTables.bootstrap.min.js"></script>
     <!-- global jquery -->
     <script src="<?php echo base_url() ?>assets/swal/sweetalert.min.js"></script>
+    <!-- datpicker -->
+    <script src="<?php echo base_url() ?>assets/datepicker/bootstrap-datepicker.js"></script>
+
     <script>
     	
     	$(function(){

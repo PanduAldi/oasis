@@ -17,6 +17,8 @@
 	<link rel="stylesheet" href="<?php echo base_url()  ?>assets/datatables/dataTables.bootstrap.css">
 	<!-- Sweet Alert -->
 	<link rel="stylesheet" href="<?php echo base_url() ?>assets/swal/sweetalert.css">
+	<!-- Date Picker -->
+
 
 	<style>
 		html {

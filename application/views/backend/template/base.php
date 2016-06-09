@@ -17,7 +17,8 @@
 	<link rel="stylesheet" href="<?php echo base_url() ?>assets/swal/sweetalert.css">
 	<!-- font awesome  -->
 	<link rel="stylesheet" href="<?php echo base_url() ?>assets/font-awesome/css/font-awesome.min.css">
-	
+	<!-- Date Picker  -->
+	<link rel="stylesheet" href="<?php echo base_url() ?>assets/datepicker/datepicker3.css">		
 	<style>
 		html {
 		  position: relative;
@@ -173,6 +174,8 @@
 	<script src="<?php echo base_url() ?>assets/datatables/dataTables.bootstrap.min.js"></script>
     <!-- global jquery -->
     <script src="<?php echo base_url() ?>assets/swal/sweetalert.min.js"></script>
+    <!-- Date Picker -->
+    <script src="<?php echo base_url() ?>assets/datepicker/bootstrap-datepicker.js"></script>
     <script>
     	
     	$(function(){

@@ -8,7 +8,7 @@
 				format : "yyyy-mm-dd"
 			});
 
-			$("#f_laporan_pemesanan").validate({
+			$("#f_laporan_konsumen").validate({
 				rules : {
 					"tgl1" : "required",
 					"tgl2" : "required"
@@ -24,7 +24,7 @@
 					var tgl2  = $("#tgl2").val();
 
 					$.ajax({
-						url : "<?php echo site_url('laporan-pemesanan/data') ?>",
+						url : "<?php echo site_url('laporan-konsumen/data') ?>",
 						type : "POST",
 						data : { tgl1 : tgl1, tgl2 : tgl2 },
 						beforeSend : function(){
@@ -37,17 +37,16 @@
 				}
 			});
 
-
 	})
 </script>
 <div class="well well-sm" >
 	<label for="">Masukan Rentang Tanggal</label>
-	<form class="form-inline" id="f_laporan_pemesanan">
+	<form class="form-inline" id="f_laporan_konsumen">
 	  <div class="form-group">
 	    <input type="text" class="form-control" name="tgl1" id="tgl1" placeholder="Tanggal Awal">
 	  </div>
 	  <div class="form-group">
-	    <label for="exampleInputEmail2">S/D</label>
+	    <label for="">S/D</label>
 	    <input type="text" class="form-control" name="tgl2" id="tgl2" placeholder="Tanggal Akhir">
 	  </div>
 	  <div class="form-group">

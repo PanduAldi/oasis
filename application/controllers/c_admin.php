@@ -1523,8 +1523,29 @@ class C_admin extends CI_Controller {
 		$tgl2 = $this->input->post('tgl2');
 
 		$data['laporan'] = $this->m_admin->get_lap_pemesanan($tgl1, $tgl2)->result();
+		$data['tgl1'] = $tgl1;
+		$data['tgl2'] = $tgl2;
 
-		$this->load->view('backend/laporan/load_pemesanan');
+		$this->load->view('backend/laporan/load_pemesanan', $data);
+	}
+
+	public function cetak_lap_pemesanan()
+	{
+		$ex = explode("_", $this->uri->segment(2));
+
+		$data = array(
+						"title" => "Cetak Laporan Pemesanan",
+						"laporan" => $this->m_admin->get_lap_pemesanan($ex[0], $ex[1])->result()
+					);
+		$this->load->view("backend/laporan/cetak_lap_pemesanan", $data);
+
+		$html = $this->output->get_output();
+
+		//create pdf
+		$this->cetak->load_html($html);
+		$this->cetak->set_paper('A4', 'potrait');
+		$this->cetak->render();
+		$this->cetak->stream('Laporan_Pemesanan_'.$ex[0]."_".$ex[1].".pdf", array('Attachment' => 0));
 	}
 
 	public function lap_konsumen()
@@ -1536,11 +1557,31 @@ class C_admin extends CI_Controller {
 
 	public function load_konsumen()
 	{
-		$data['laporan'] = $this->m_admin->get_lap_konsumen($this->input->post('tgl1'), $this->input->post('tgl'))->result();
+		$data['laporan'] = $this->m_admin->get_lap_konsumen($this->input->post('tgl1'), $this->input->post('tgl2'))->result();
+		$data['tgl1'] = $this->input->post('tgl1');
+		$data['tgl2'] = $this->input->post('tgl2');
 		
-		$this->load->view('backend/laporan/load_konsumen');
+		$this->load->view('backend/laporan/load_konsumen', $data);
 	}
 
+	public function cetak_lap_konsumen()
+	{
+		$ex = explode("_", $this->uri->segment(2));
+
+		$data = array(
+						"title" => "Cetak Laporan Pemesanan",
+						"laporan" => $this->m_admin->get_lap_konsumen($ex[0], $ex[1])->result()
+					);
+		$this->load->view("backend/laporan/cetak_lap_konsumen", $data);
+
+		$html = $this->output->get_output();
+
+		//create pdf
+		$this->cetak->load_html($html);
+		$this->cetak->set_paper('A4', 'potrait');
+		$this->cetak->render();
+		$this->cetak->stream('Laporan_Konsumen_'.$ex[0]."_".$ex[1].".pdf", array('Attachment' => 0));
+	}
 	/**
 	 * Feature option
 	 */
