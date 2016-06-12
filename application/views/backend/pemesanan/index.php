@@ -40,7 +40,7 @@
 
 
 			$.ajax({
-				url : "<?php echo site_url('pemesanan_hapus') ?>",
+				url : "<?php echo site_url('pemesanan/hapus') ?>",
 				type : "POST",
 				data  : {id : kode},
 				success : function(){
