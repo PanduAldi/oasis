@@ -1582,6 +1582,22 @@ class C_admin extends CI_Controller {
 		$this->cetak->render();
 		$this->cetak->stream('Laporan_Konsumen_'.$ex[0]."_".$ex[1].".pdf", array('Attachment' => 0));
 	}
+
+	public function lap_pembayaran()
+	{
+		$data['title'] = "Laporan Pembayaran";
+
+		$this->admin_template->display('backend/laporan/lap_pembayaran');
+	}
+
+	public function load_pembayaran()
+	{
+		$data['laporan'] = $ths->m_admin->get_lap_pembyaran();
+
+		$this->load->view('backend/laporan/load_pembayaran', $data);
+
+	}
+
 	/**
 	 * Feature option
 	 */
